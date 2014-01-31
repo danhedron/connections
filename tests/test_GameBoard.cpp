@@ -24,14 +24,22 @@ BOOST_AUTO_TEST_CASE(Board_Test)
 {
 	GameBoard board(5);	
 
-	board.putToken(1, 2, T_RED);
+	board.putToken(1, 2, T_WHITE);
 	board.putToken(2, 2, T_WHITE);
 
-	BOOST_CHECK_EQUAL( board.getColour(1, 2), T_RED);
+	board.putToken(1, 3, T_RED);
+	board.putToken(2, 3, T_RED);
+
+	BOOST_CHECK_EQUAL( board.getColour(1, 2), T_WHITE);
 	BOOST_CHECK_EQUAL( board.getColour(2, 2), T_WHITE);
+	BOOST_CHECK_EQUAL( board.getColour(1, 3), T_RED);
+	BOOST_CHECK_EQUAL( board.getColour(2, 3), T_RED);
 
 	BOOST_CHECK_EQUAL( board.getOrientation(1, 2), O_HORIZONTAL);
 	BOOST_CHECK_EQUAL( board.getOrientation(2, 2), O_VERTICAL);
+
+	BOOST_CHECK_EQUAL( board.getOrientation(1, 3), O_VERTICAL);
+	BOOST_CHECK_EQUAL( board.getOrientation(2, 3), O_HORIZONTAL);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
