@@ -32,7 +32,7 @@ GameBoard::GameBoard(BoardIndex length)
 {
 	rows.reserve(length);
 	for(unsigned int r = 0; r < length; ++r) {
-		rows.push_back(BoardRow(r%2?T_WHITE:T_RED, r%2?5:4));
+		rows.push_back(BoardRow(r%2?T_WHITE:T_RED, (r%2!=0)?5:4));
 	}
 }
 
@@ -52,5 +52,78 @@ TokenOrientation GameBoard::getOrientation(BoardIndex row, BoardIndex i) const
 {
 	assert(row < rows.size());
 	return rows[row].getOrientation(i);
+}
+
+BoardIndex GameBoard::getRowSize(BoardIndex row) const
+{
+	return ((row%2!=0)? 5 : 4);
+}
+
+void GameBoard::reset()
+{
+	for(unsigned int r = 0; r < rows.size(); ++r) {
+		for(unsigned int c = 0; c < ((r%2!=0)?5:4); ++c) {
+			rows[r].putToken(c, T_EMPTY);
+		}
+	}
+}
+
+bool GameBoard::isEndGame() const
+{
+	// Determine if either colour has reached across the board.
+	for(unsigned int r = 0; r < rows.size(); ++r) {
+		bool broke = false;
+		for(unsigned int c = 0; c < getRowSize(r); ++c) {
+			if(getColour(r, c) != T_WHITE) {
+				broke = true;
+				break;
+			}
+		}
+		if(! broke) {
+			return true;
+		}
+	}
+	for(unsigned int c = 0; c < rows.size(); ++c) {
+		bool broke = false;
+		for(unsigned int r = 1; r < rows.size(); r += 2) {
+			if(getColour(r, c) != T_RED) {
+				broke = true;
+				break;
+			}
+		}
+		if(! broke) {
+			return true;
+		}
+	}
+	return false;
+}
+
+TokenColour GameBoard::getWinner() const
+{
+	for(unsigned int r = 0; r < rows.size(); ++r) {
+		bool broke = false;
+		for(unsigned int c = 0; c < getRowSize(r); ++c) {
+			if(getColour(r, c) != T_WHITE) {
+				broke = true;
+				break;
+			}
+		}
+		if(! broke) {
+			return T_WHITE;
+		}
+	}
+	for(unsigned int c = 0; c < rows.size(); ++c) {
+		bool broke = false;
+		for(unsigned int r = 1; r < rows.size(); r += 2) {
+			if(getColour(r, c) != T_RED) {
+				broke = true;
+				break;
+			}
+		}
+		if(! broke) {
+			return T_RED;
+		}
+	}
+	return T_EMPTY;
 }
 

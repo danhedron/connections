@@ -75,6 +75,14 @@ public:
 	TokenColour getColour(BoardIndex row, BoardIndex i) const;
 
 	TokenOrientation getOrientation(BoardIndex row, BoardIndex i) const;
+
+	BoardIndex getRowSize(BoardIndex row) const;
+
+	void reset();
+
+	bool isEndGame() const;
+
+	TokenColour getWinner() const;
 };
 
 #endif

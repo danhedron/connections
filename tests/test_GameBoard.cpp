@@ -42,4 +42,46 @@ BOOST_AUTO_TEST_CASE(Board_Test)
 	BOOST_CHECK_EQUAL( board.getOrientation(2, 3), O_HORIZONTAL);
 }
 
+BOOST_AUTO_TEST_CASE(Board_Test_Reset)
+{
+	GameBoard board(5);	
+
+	for(unsigned int i = 0; i < 4; i++) {
+		board.putToken(1, i, T_WHITE);
+	}
+
+	board.reset();
+
+	for(unsigned int i = 0; i < 4; i++) {
+		BOOST_CHECK_EQUAL( board.getColour(1, i), T_EMPTY);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(Board_Test_GameOver)
+{
+	GameBoard board(5);	
+
+	BOOST_CHECK(! board.isEndGame() );
+
+	for(unsigned int i = 0; i < 5; i++) {
+		board.putToken(1,i, T_WHITE);
+	}
+
+	BOOST_CHECK( board.isEndGame() );
+
+	BOOST_CHECK( board.getWinner() == T_WHITE );
+
+	board.reset();
+
+	BOOST_CHECK(! board.isEndGame() );
+
+	for(unsigned int i = 0; i < 5; i++) {
+		board.putToken(i, 1, T_RED);
+	}
+
+	BOOST_CHECK( board.isEndGame() );
+
+	BOOST_CHECK( board.getWinner() == T_RED );
+}
+
 BOOST_AUTO_TEST_SUITE_END()
