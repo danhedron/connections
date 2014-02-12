@@ -13,4 +13,4 @@ FILE(GLOB APP_SOURCES "app/*.cpp")
 FILE(GLOB APP_HEADERS "app/*.hpp")
 
 add_executable(connections ${GAME_SOURCES} ${APP_SOURCES} ${APP_HEADERS_PROCESSED})
-qt5_use_modules(connections Widgets Declarative)
+qt5_use_modules(connections Widgets)
