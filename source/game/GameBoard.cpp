@@ -59,6 +59,16 @@ BoardIndex GameBoard::getRowSize(BoardIndex row) const
 	return ((row%2!=0)? 5 : 4);
 }
 
+TokenColour GameBoard::getRowColour(BoardIndex row)
+{
+	return row%2?T_WHITE:T_RED;
+}
+
+BoardIndex GameBoard::getBoardLength() const
+{
+	return rows.size();
+}
+
 void GameBoard::reset()
 {
 	for(unsigned int r = 0; r < rows.size(); ++r) {

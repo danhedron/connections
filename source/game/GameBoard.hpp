@@ -77,6 +77,10 @@ public:
 	TokenOrientation getOrientation(BoardIndex row, BoardIndex i) const;
 
 	BoardIndex getRowSize(BoardIndex row) const;
+	
+	TokenColour getRowColour(BoardIndex row);
+
+	BoardIndex getBoardLength() const;
 
 	void reset();
 
