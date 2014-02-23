@@ -1,5 +1,6 @@
 #include <GameBoard.hpp>
 #include <boost/test/unit_test.hpp>
+#include "test_util.hpp"
 
 BOOST_AUTO_TEST_SUITE(GameBoardTests)
 
@@ -59,13 +60,15 @@ BOOST_AUTO_TEST_CASE(Board_Test_Reset)
 
 BOOST_AUTO_TEST_CASE(Board_Test_GameOver)
 {
-	GameBoard board(5);	
+	GameBoard board(5);
 
 	BOOST_CHECK(! board.isEndGame() );
 
-	for(unsigned int i = 0; i < 5; i++) {
+	for(unsigned int i = 0; i < board.getRowSize(1); i++) {
 		board.putToken(1,i, T_WHITE);
 	}
+
+	print_board(board);
 
 	BOOST_CHECK( board.isEndGame() );
 
@@ -75,9 +78,11 @@ BOOST_AUTO_TEST_CASE(Board_Test_GameOver)
 
 	BOOST_CHECK(! board.isEndGame() );
 
-	for(unsigned int i = 0; i < 5; i++) {
+	for(unsigned int i = 1; i < board.getBoardLength(); i+=2) {
 		board.putToken(i, 1, T_RED);
 	}
+	
+	print_board(board);
 
 	BOOST_CHECK( board.isEndGame() );
 

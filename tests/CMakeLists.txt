@@ -1,8 +1,8 @@
 FILE(GLOB TEST_SOURCES "*.cpp")
 FILE(GLOB GAME_SOURCES "../source/game/*.cpp")
-ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK) 
+ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK)
 
-add_executable(run_tests ${TEST_SOURCES} ${GAME_SOURCES}) 
+add_executable(run_tests ${TEST_SOURCES} ${GAME_SOURCES})
 
 include_directories(../source/game)
 

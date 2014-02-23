@@ -2,6 +2,7 @@
 #ifndef _GAME_BOARD_HPP
 #define _GAME_BOARD_HPP
 #include <vector>
+#include "GameTypes.hpp"
 
 /**
  * Rough notes on grid layout
@@ -28,18 +29,6 @@
  *  N· · · · ·N
  *  
  */
-
-typedef unsigned int BoardIndex;
-
-enum TokenOrientation {
-	O_VERTICAL,
-	O_HORIZONTAL
-};
-enum TokenColour {
-	T_EMPTY,
-	T_RED,
-	T_WHITE
-};
 
 class BoardRow
 {
@@ -77,10 +66,16 @@ public:
 	TokenOrientation getOrientation(BoardIndex row, BoardIndex i) const;
 
 	BoardIndex getRowSize(BoardIndex row) const;
-	
-	TokenColour getRowColour(BoardIndex row);
+
+	TokenColour getRowColour(BoardIndex row) const;
 
 	BoardIndex getBoardLength() const;
+
+	std::vector<Move> getAdjacentPoints(BoardIndex r, BoardIndex c) const;
+
+	void makeMove(const Move& m);
+
+	std::vector<Move> availableMoves() const;
 
 	void reset();
 
