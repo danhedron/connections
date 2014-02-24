@@ -18,6 +18,8 @@ class MinMaxAgent : public Agent
 
     float utility(const GameBoard& board);
 
+    float eval(const GameBoard& board);
+
     float minValue(const GameBoard& board, const Move& move, unsigned int d);
 
     float maxValue(const GameBoard& board, const Move& move, unsigned int d);

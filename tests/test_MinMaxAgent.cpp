@@ -8,13 +8,15 @@ BOOST_AUTO_TEST_SUITE(MinMaxAgentTests)
 
 BOOST_AUTO_TEST_CASE(MinMaxTest)
 {
-    GameBoard board(3);
-    board.putToken(1,0, T_RED);
-    //board.putToken(0,0, T_RED);
-    //board.putToken(6,1, T_RED);
+    GameBoard board(5);
+//    board.putToken(1,0, T_RED);
+//    board.putToken(0,0, T_RED);
+//    board.putToken(6,1, T_RED);
+//    board.putToken(5,0, T_WHITE);
+//    board.putToken(0,1, T_WHITE);
+//    board.putToken(2,1, T_WHITE);
     board.putToken(5,0, T_WHITE);
-    //board.putToken(0,1, T_WHITE);
-    //board.putToken(2,1, T_WHITE);
+    board.putToken(5,1, T_WHITE);
     print_board(board);
 
     MinMaxAgent redagent(T_RED);
@@ -26,7 +28,7 @@ BOOST_AUTO_TEST_CASE(MinMaxTest)
             board.putToken(mr.row, mr.column, T_RED);
             print_board(board);
         }
-        else {
+        else if(false) {
             Move mw = whiteagent.calculateMove(board);
             board.putToken(mw.row, mw.column, T_WHITE);
             print_board(board);
