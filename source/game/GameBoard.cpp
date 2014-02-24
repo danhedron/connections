@@ -78,7 +78,7 @@ std::vector<Move> GameBoard::availableMoves() const
 	std::vector<Move> moves;
 	for(unsigned int r = 0; r < rows.size(); ++r) {
 		for(unsigned int c = 0; c < getRowSize(r); ++c) {
-			if(getColour(c, r) == T_EMPTY) {
+            if(getColour(r, c) == T_EMPTY) {
 				moves.push_back({r, c});
 			}
 		}

@@ -20,8 +20,10 @@ int MinMaxAgent::utility(const GameBoard& board)
 	return -1;
 }
 
-int MinMaxAgent::minValue(const GameBoard& board, const Move& move)
+int MinMaxAgent::minValue(const GameBoard& oldboard, const Move& move)
 {
+    GameBoard board(oldboard);
+    board.putToken(move.row, move.column, playerColour == T_RED? T_WHITE : T_RED);
 	if(board.isEndGame()) {
 		return utility(board);
 	}
@@ -33,8 +35,10 @@ int MinMaxAgent::minValue(const GameBoard& board, const Move& move)
 	return score;
 }
 
-int MinMaxAgent::maxValue(const GameBoard& board, const Move& move)
+int MinMaxAgent::maxValue(const GameBoard& oldboard, const Move& move)
 {
+    GameBoard board(oldboard);
+    board.putToken(move.row, move.column, playerColour);
 	if(board.isEndGame()) {
 		return utility(board);
 	}

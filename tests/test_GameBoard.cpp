@@ -68,8 +68,6 @@ BOOST_AUTO_TEST_CASE(Board_Test_GameOver)
 		board.putToken(1,i, T_WHITE);
 	}
 
-	print_board(board);
-
 	BOOST_CHECK( board.isEndGame() );
 
 	BOOST_CHECK( board.getWinner() == T_WHITE );
@@ -81,8 +79,6 @@ BOOST_AUTO_TEST_CASE(Board_Test_GameOver)
 	for(unsigned int i = 1; i < board.getBoardLength(); i+=2) {
 		board.putToken(i, 1, T_RED);
 	}
-	
-	print_board(board);
 
 	BOOST_CHECK( board.isEndGame() );
 

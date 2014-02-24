@@ -3,7 +3,7 @@
 #include <GameBoard.hpp>
 
 std::string colesc(TokenColour t) {
-	return t == T_RED ? "\033[91m": "\033[97m";
+    return t == T_RED ? "\033[91m": "\033[39m";
 }
 
 std::string toksym(TokenOrientation o) {
@@ -27,5 +27,13 @@ void print_board(const GameBoard& board)
 		}
 		std::cout << rowesc << " · " << "\033[39m" << std::endl;
 	}
+
+    if(board.isEndGame()) {
+        std::string winner = board.getWinner() == T_RED ? "Red" : "White";
+        std::cout << "Endgame, winner: " << winner << std::endl;
+    }
+    else {
+        std::cout << "No winner" << std::endl;
+    }
 }
 
