@@ -5,9 +5,12 @@
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 : QMainWindow(parent, flags), gbw(nullptr)
 {
+    setMinimumSize(300, 300);
 	gbw = new GameBoardWidget;
-	
-	gbw->setGameBoard(new GameBoard(5));
+    GameBoard* gb = new GameBoard(5);
+    gb->putToken(1,0, T_RED);
+    gb->putToken(1,1, T_WHITE);
+    gbw->setGameBoard(gb);
 	
 	setCentralWidget(gbw);
 	
