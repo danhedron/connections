@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(MinMaxTest)
             board.putToken(mr.row, mr.column, T_RED);
             print_board(board);
         }
-        else if(false) {
+        else {
             Move mw = whiteagent.calculateMove(board);
             board.putToken(mw.row, mw.column, T_WHITE);
             print_board(board);
