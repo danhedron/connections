@@ -54,25 +54,33 @@ float MinMaxAgent::maxValue(const GameBoard& oldboard, const Move& move, unsigne
     return score;
 }
 
-float MinMaxAgent::value(const GameBoard &board, bool player, unsigned int d)
+int tbuff= 0;
+float MinMaxAgent::value(const GameBoard &board, bool player, float al, float bet, unsigned int d)
 {
     tally ++;
+    if(tally - tbuff >= 10000) {
+        std::cout << tally << " states" << std::endl;
+        tbuff = tally;
+    }
     if(board.isEndGame()) {
         return utility(board);
     }
 
-    float score = (player?std::numeric_limits<float>::lowest():std::numeric_limits<float>::max());
     if(player) {
         for(Move& m : board.availableMoves()) {
-            score = std::max(score, value(board.apply(m, playerColour), !player, d+1));
+            al = std::max(al, value(board.apply(m, playerColour), al, bet, !player, d+1));
+            if(al >= bet) return bet;
         }
+        return al;
     }
     else {
         for(Move& m : board.availableMoves()) {
-            score = std::min(score, value(board.apply(m, playerColour==T_RED? T_WHITE:T_RED), !player, d+1));
+            bet = std::min(bet, value(board.apply(m, (playerColour==T_RED)? T_WHITE:T_RED),
+                                         al, bet, !player, d+1));
+            if(bet <= al) return al;
         }
+        return bet;
     }
-    return score;
 }
 
 Move MinMaxAgent::calculateMove(const GameBoard& board)
@@ -82,7 +90,9 @@ Move MinMaxAgent::calculateMove(const GameBoard& board)
 	Move best;
     float bestScore = -std::numeric_limits<float>::max();
     for(auto& move : moves) {
-        auto v = value(board.apply(move, playerColour), false, 1);
+        auto v = value(board.apply(move, playerColour), false,
+                       std::numeric_limits<float>::lowest(),
+                       std::numeric_limits<float>::max(), 1);
         if(v > bestScore) {
             bestScore = v;
 			best = move;
@@ -91,4 +101,3 @@ Move MinMaxAgent::calculateMove(const GameBoard& board)
     std::cout << "Evaulated " << tally << " states" << std::endl;
 	return best;
 }
-

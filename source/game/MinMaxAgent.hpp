@@ -22,7 +22,7 @@ class MinMaxAgent : public Agent
 
     float maxValue(const GameBoard& board, const Move& move, unsigned int d);
 
-    float value(const GameBoard& board, bool player, unsigned int d);
+    float value(const GameBoard& board, bool player, float al, float bet, unsigned int d);
 public:
 
 	MinMaxAgent(TokenColour player);
