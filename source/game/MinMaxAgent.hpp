@@ -14,12 +14,15 @@ public:
 class MinMaxAgent : public Agent
 {
 	TokenColour playerColour;
+    unsigned int tally;
 
-	int utility(const GameBoard& board);
+    float utility(const GameBoard& board);
 
-	int minValue(const GameBoard& board, const Move& move);
+    float minValue(const GameBoard& board, const Move& move, unsigned int d);
 
-	int maxValue(const GameBoard& board, const Move& move);
+    float maxValue(const GameBoard& board, const Move& move, unsigned int d);
+
+    float value(const GameBoard& board, bool player, unsigned int d);
 public:
 
 	MinMaxAgent(TokenColour player);

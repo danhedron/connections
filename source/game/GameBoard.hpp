@@ -3,6 +3,7 @@
 #define _GAME_BOARD_HPP
 #include <vector>
 #include "GameTypes.hpp"
+#include <string>
 
 /**
  * Rough notes on grid layout
@@ -77,11 +78,16 @@ public:
 
 	std::vector<Move> availableMoves() const;
 
+    GameBoard apply(const Move& m, TokenColour c) const;
+
 	void reset();
 
 	bool isEndGame() const;
 
 	TokenColour getWinner() const;
+
+    /** Prints board to stdout */
+    void printBoard(std::string prefix="") const;
 };
 
 #endif
