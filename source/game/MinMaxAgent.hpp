@@ -9,6 +9,8 @@ class Agent
 {
 public:
 	virtual Move calculateMove(const GameBoard& board) = 0;
+
+	virtual ~Agent(){}
 };
 
 class MinMaxAgent : public Agent

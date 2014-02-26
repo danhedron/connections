@@ -6,6 +6,8 @@
 #include <GameTypes.hpp>
 
 class GameBoardWidget;
+class Agent;
+
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
@@ -17,6 +19,10 @@ class MainWindow : public QMainWindow
 	TokenColour currentTurn;
 
 	QLabel* statusLabel;
+
+	Agent* redPlayerAgent; // Todo this one.
+
+	Agent* whitePlayerAgent;
 
 public:
 

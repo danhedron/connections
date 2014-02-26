@@ -4,9 +4,11 @@
 #include <QMenuBar>
 #include <QStatusBar>
 #include <QMessageBox>
+#include <MinMaxAgent.hpp>
 
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
-: QMainWindow(parent, flags), gbw(nullptr), boardSize(5)
+: QMainWindow(parent, flags), gbw(nullptr), boardSize(5),
+  redPlayerAgent(nullptr), whitePlayerAgent(nullptr)
 {
 	setMinimumSize(300, 300);
 
@@ -30,12 +32,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
 	auto gb = gbw->gameBoard();
 	gb->putToken(0,0, T_RED);
-	gb->putToken(0,1, T_RED);
-	gb->putToken(0,2, T_RED);
 	gb->putToken(1,0, T_WHITE);
-	gb->putToken(1,1, T_WHITE);
-	gb->putToken(1,2, T_WHITE);
-	gb->putToken(1,3, T_WHITE);
 
 	setCurrentPlayer(T_RED);
 
@@ -101,6 +98,12 @@ void MainWindow::resetGame()
 	delete gbw->gameBoard();
 	GameBoard* gb = new GameBoard(boardSize);
 	gbw->setGameBoard(gb);
+
+	if(whitePlayerAgent) {
+		delete whitePlayerAgent;
+	}
+
+	whitePlayerAgent = new MinMaxAgent(T_WHITE);
 }
 
 void MainWindow::playerClick(BoardIndex row, BoardIndex column)
@@ -110,10 +113,13 @@ void MainWindow::playerClick(BoardIndex row, BoardIndex column)
 			makeMove(row, column);
 			setCurrentPlayer(T_WHITE);
 		}
-		else if(currentTurn == T_WHITE) {
-			makeMove(row, column);
+		if(! gbw->gameBoard()->isEndGame()) {
+			// ask AI player to do something.
+			// TODO: move this into worker
+			Move m = whitePlayerAgent->calculateMove(* gbw->gameBoard());
+			makeMove(m.row, m.column);
+
 			setCurrentPlayer(T_RED);
 		}
-		// ask AI player to do something.
 	}
 }
