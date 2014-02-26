@@ -7,13 +7,13 @@ const int leftMargin = 20;
 const int tilesize = 40;
 const int halftile = tilesize / 2;
 
-QPoint GameBoardWidget::calculateTilePosition(BoardIndex row, BoardIndex col) const
+QPointF GameBoardWidget::calculateTilePosition(BoardIndex row, BoardIndex col) const
 {
 	int rf = halftile;
 	if(board->getRowColour(row) == T_RED) {
 		rf = tilesize;
 	}
-	return QPoint(leftMargin + rf + col * tilesize, halftile + row * halftile);
+    return QPointF(leftMargin + rf + col * tilesize, halftile + row * halftile);
 }
 
 QTransform GameBoardWidget::calculateBoardTransform() const
@@ -32,30 +32,25 @@ QTransform GameBoardWidget::calculateBoardTransform() const
 
 void GameBoardWidget::paintEvent(QPaintEvent*)
 {
-	QPainter p(this);
-	QBrush red;
-	red.setColor(Qt::red);
-	QBrush white;
-	white.setColor(Qt::white);
-	
+    QPainter p(this);
 	QBrush back(Qt::darkGray);
     p.fillRect(0, 0, width(), height(), back);
     auto btr = calculateBoardTransform();
 
-	QPolygon tokenBack;
-	tokenBack << QPoint( -5, -15) << QPoint(  5, -15)
-			  << QPoint( 15,  -5) << QPoint( 15,   5)
-			  << QPoint(  5,  15) << QPoint( -5,  15)
-			  << QPoint(-15,   5) << QPoint(-15,  -5);
+    QPolygonF tokenBack;
+    tokenBack << QPointF( -5, -15) << QPointF(  5, -15)
+              << QPointF( 15,  -5) << QPointF( 15,   5)
+              << QPointF(  5,  15) << QPointF( -5,  15)
+              << QPointF(-15,   5) << QPointF(-15,  -5);
 	p.setBrush(QBrush(Qt::black));
 	
 	if(board) {
 		for(size_t r = 0; r < board->getBoardLength(); ++r) {
 			for(size_t c = 0; c < board->getRowSize(r) + 1; ++c) {
-				QPoint t = calculateTilePosition(r, c);
+                QPointF t = calculateTilePosition(r, c);
                 p.setTransform(btr);
                 p.setTransform(QTransform::fromTranslate(t.x(), t.y()), true);
-				p.fillRect(-25, -5, 10, 10, board->getRowColour(r) == T_RED ? Qt::red : Qt::white);
+                p.fillRect(QRectF(-25, -5, 10, 10), board->getRowColour(r) == T_RED ? Qt::red : Qt::white);
 				if( c < board->getRowSize(r) ) {
 					// Draw token
 					auto s = board->getColour(r, c);
@@ -65,10 +60,10 @@ void GameBoardWidget::paintEvent(QPaintEvent*)
                         bool vert = true;
                         if(board->getRowColour(r) == s) { vert = false; }
                         if(vert) {
-							p.fillRect(-5, -15, 10, 30, color);
+                            p.fillRect(QRectF(-5, -15, 10, 30), color);
                         }
                         else {
-							p.fillRect(-15, -5, 30, 10, color);
+                            p.fillRect(QRectF(-15, -5, 30, 10), color);
                         }
                     }
 				}
@@ -90,13 +85,14 @@ void GameBoardWidget::setGameBoard(GameBoard* b)
 
 void GameBoardWidget::mousePressEvent(QMouseEvent* e)
 {
+    auto btr = calculateBoardTransform();
 	if(board) {
 		BoardIndex crow = 0;
 		BoardIndex ccol = 0;
 		int closest = std::numeric_limits<int>::max();
 		for(size_t r = 0; r < board->getBoardLength(); ++r) {
 			for(size_t c = 0; c < board->getRowSize(r); ++c) {
-				QPoint p = calculateTilePosition(r, c);
+                QPointF p = btr.map(calculateTilePosition(r, c));
 				auto d = (p - e->pos()).manhattanLength();
 				if(d < closest) {
 					crow = r; ccol = c;
