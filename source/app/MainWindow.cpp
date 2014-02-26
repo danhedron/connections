@@ -3,6 +3,7 @@
 #include <game/GameBoard.hpp>
 #include <QMenuBar>
 #include <QStatusBar>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 : QMainWindow(parent, flags), gbw(nullptr), boardSize(5)
@@ -45,16 +46,35 @@ void MainWindow::makeMove(BoardIndex row, BoardIndex column)
 {
 	gbw->gameBoard()->putToken(row, column, currentTurn);
 	gbw->update();
+	if(gbw->gameBoard()->isEndGame()) {
+		auto winner = gbw->gameBoard()->getWinner();
+
+		QMessageBox mbx;
+		if(winner == T_RED) {
+			mbx.setText("Red Player Wins!");
+		} else if (winner == T_WHITE) {
+			mbx.setText("White Player Wins!");
+		}
+		else {
+			mbx.setText("Nobody Wins!");
+		}
+
+		mbx.exec();
+
+		resetGame();
+	}
 }
 
 void MainWindow::setCurrentPlayer(TokenColour player)
 {
-	currentTurn = player;
-	if(currentTurn == T_RED) {
-		statusLabel->setText("Reds turn");
-	}
-	else {
-		statusLabel->setText("Whites turn");
+	if(! gbw->gameBoard()->isEndGame()) {
+		currentTurn = player;
+		if(currentTurn == T_RED) {
+			statusLabel->setText("Reds turn");
+		}
+		else {
+			statusLabel->setText("Whites turn");
+		}
 	}
 }
 
@@ -85,11 +105,15 @@ void MainWindow::resetGame()
 
 void MainWindow::playerClick(BoardIndex row, BoardIndex column)
 {
-	if(currentTurn == T_RED) {
-		makeMove(row, column);
+	if(gbw->gameBoard()->getColour(row,column) == T_EMPTY) {
+		if(currentTurn == T_RED) {
+			makeMove(row, column);
+			setCurrentPlayer(T_WHITE);
+		}
+		else if(currentTurn == T_WHITE) {
+			makeMove(row, column);
+			setCurrentPlayer(T_RED);
+		}
+		// ask AI player to do something.
 	}
-	else {
-		makeMove(row, column);
-	}
-	// ask AI player to do something.
 }
