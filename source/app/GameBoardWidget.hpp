@@ -12,6 +12,8 @@ class GameBoardWidget : public QWidget
 	GameBoard* board;
 
 	QPoint calculateTilePosition(BoardIndex row, BoardIndex col) const;
+
+    QTransform calculateBoardTransform() const;
 public:
 	
 	GameBoard* gameBoard() const;

@@ -1,10 +1,10 @@
 FILE(GLOB TEST_SOURCES "*.cpp")
-FILE(GLOB GAME_SOURCES "../source/game/*.cpp")
+FILE(GLOB GAME_SOURCES "${CMAKE_SOURCE_DIR}/source/game/*.cpp")
 ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK)
 
 add_executable(run_tests ${TEST_SOURCES} ${GAME_SOURCES})
 
-include_directories(../source/game)
+include_directories("${CMAKE_SOURCE_DIR}/source/game")
 
 find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 

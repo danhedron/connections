@@ -3,16 +3,31 @@
 #include <QPainter>
 #include <QMouseEvent>
 
+const int leftMargin = 20;
+const int tilesize = 40;
+const int halftile = tilesize / 2;
+
 QPoint GameBoardWidget::calculateTilePosition(BoardIndex row, BoardIndex col) const
 {
-	const int leftMargin = 10;
-	const int tilesize = 40;
-	const int halftile = tilesize / 2;
 	int rf = halftile;
 	if(board->getRowColour(row) == T_RED) {
 		rf = tilesize;
 	}
 	return QPoint(leftMargin + rf + col * tilesize, halftile + row * halftile);
+}
+
+QTransform GameBoardWidget::calculateBoardTransform() const
+{
+    float size = (leftMargin) + halftile * (board->getBoardLength());
+    float scale = std::min(height()/size, width()/size);
+    QTransform tScale = QTransform::fromScale(scale, scale);
+    QTransform tOffset;
+    if( height() > width() ) {
+        tOffset = QTransform::fromTranslate(0.f, (height() - size*scale)/2.f);
+    } else {
+        tOffset = QTransform::fromTranslate((width() - size*scale)/2.f, 0.f);
+    }
+    return tScale * tOffset;
 }
 
 void GameBoardWidget::paintEvent(QPaintEvent*)
@@ -24,7 +39,8 @@ void GameBoardWidget::paintEvent(QPaintEvent*)
 	white.setColor(Qt::white);
 	
 	QBrush back(Qt::darkGray);
-	p.fillRect(0, 0, width(), height(), back);
+    p.fillRect(0, 0, width(), height(), back);
+    auto btr = calculateBoardTransform();
 
 	QPolygon tokenBack;
 	tokenBack << QPoint( -5, -15) << QPoint(  5, -15)
@@ -37,7 +53,8 @@ void GameBoardWidget::paintEvent(QPaintEvent*)
 		for(size_t r = 0; r < board->getBoardLength(); ++r) {
 			for(size_t c = 0; c < board->getRowSize(r) + 1; ++c) {
 				QPoint t = calculateTilePosition(r, c);
-				p.setTransform(QTransform::fromTranslate(t.x(), t.y()));
+                p.setTransform(btr);
+                p.setTransform(QTransform::fromTranslate(t.x(), t.y()), true);
 				p.fillRect(-25, -5, 10, 10, board->getRowColour(r) == T_RED ? Qt::red : Qt::white);
 				if( c < board->getRowSize(r) ) {
 					// Draw token
