@@ -12,5 +12,7 @@ FILE(GLOB GAME_SOURCES "game/*.cpp")
 FILE(GLOB APP_SOURCES "app/*.cpp")
 FILE(GLOB APP_HEADERS "app/*.hpp")
 
+include_directories("${CMAKE_SOURCE_DIR}/source/game")
+
 add_executable(connections ${GAME_SOURCES} ${APP_SOURCES})
 qt5_use_modules(connections Widgets)
