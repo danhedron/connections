@@ -28,11 +28,17 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 	normalGame();
 
 	auto gb = gbw->gameBoard();
-	gb->putToken(1,0, T_RED);
+	gb->putToken(0,0, T_RED);
+	gb->putToken(0,1, T_RED);
+	gb->putToken(0,2, T_RED);
+	gb->putToken(1,0, T_WHITE);
 	gb->putToken(1,1, T_WHITE);
+	gb->putToken(1,2, T_WHITE);
+	gb->putToken(1,3, T_WHITE);
 
 	setCurrentPlayer(T_RED);
 
+	connect(gbw, SIGNAL(boardClicked(BoardIndex,BoardIndex)), this, SLOT(playerClick(BoardIndex,BoardIndex)));
 }
 
 void MainWindow::makeMove(BoardIndex row, BoardIndex column)
@@ -80,6 +86,9 @@ void MainWindow::resetGame()
 void MainWindow::playerClick(BoardIndex row, BoardIndex column)
 {
 	if(currentTurn == T_RED) {
+		makeMove(row, column);
+	}
+	else {
 		makeMove(row, column);
 	}
 	// ask AI player to do something.
