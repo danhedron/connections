@@ -4,6 +4,7 @@
 #include <QMenuBar>
 #include <QStatusBar>
 #include <QMessageBox>
+#include <QApplication>
 #include <MinMaxAgent.hpp>
 
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
@@ -21,6 +22,12 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 	size->addAction("&Small", this, SLOT(smallGame()));
 	size->addAction("&Large", this, SLOT(largeGame()));
 
+	game->addSeparator();
+	game->addAction("&Quit", QApplication::instance(), SLOT(quit()), QKeySequence::Quit);
+
+	QMenu* help = mb->addMenu("&Help");
+	help->addAction("&About Qt", QGuiApplication::instance(), SLOT(aboutQt()));
+
 	statusLabel = new QLabel();
 	statusBar()->addWidget(statusLabel);
 
@@ -29,10 +36,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 	setCentralWidget(gbw);
 
 	normalGame();
-
-	auto gb = gbw->gameBoard();
-	gb->putToken(0,0, T_RED);
-	gb->putToken(1,0, T_WHITE);
 
 	setCurrentPlayer(T_RED);
 
