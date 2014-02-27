@@ -107,6 +107,8 @@ void MainWindow::resetGame()
 	}
 
 	whitePlayerAgent = new MinMaxAgent(T_WHITE);
+
+    setCurrentPlayer(T_RED);
 }
 
 void MainWindow::playerClick(BoardIndex row, BoardIndex column)
