@@ -21,9 +21,13 @@ class MainWindow : public QMainWindow
 
 	QLabel* statusLabel;
 
-	Agent* redPlayerAgent; // Todo this one.
+	bool redai;
+
+	Agent* redPlayerAgent;
 
 	Agent* whitePlayerAgent;
+
+	void queueAIMove(Agent* agent, TokenColour tc);
 
 public:
 
@@ -33,8 +37,8 @@ public:
 
 public slots:
 
-    void makeMove(BoardIndex row, BoardIndex column);
-    void makeMove(MoveResult*);
+	void makeMove(BoardIndex row, BoardIndex column);
+	void makeMove(MoveResult*);
 
 private slots:
 
@@ -45,6 +49,8 @@ private slots:
 	void largeGame();
 
 	void resetGame();
+
+	void AIGame();
 
 	void playerClick(BoardIndex row, BoardIndex column);
 };

@@ -8,8 +8,16 @@
 #include "AIPlayerWorker.hpp"
 #include <MinMaxAgent.hpp>
 
+void MainWindow::queueAIMove(Agent *agent, TokenColour tc)
+{
+	setCurrentPlayer(tc);
+	AIPlayerWorker* worker = new AIPlayerWorker(agent);
+	connect(worker, SIGNAL(moveDecided(MoveResult*)), this, SLOT(makeMove(MoveResult*)));
+	worker->startMove( gbw->gameBoard());
+}
+
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
-: QMainWindow(parent, flags), gbw(nullptr), boardSize(5),
+: QMainWindow(parent, flags), gbw(nullptr), boardSize(5), redai(false),
   redPlayerAgent(nullptr), whitePlayerAgent(nullptr)
 {
 	setMinimumSize(300, 300);
@@ -22,6 +30,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 	size->addAction("&Normal", this, SLOT(normalGame()));
 	size->addAction("&Small", this, SLOT(smallGame()));
 	size->addAction("&Large", this, SLOT(largeGame()));
+
+	game->addAction("&AI Versus", this, SLOT(AIGame()));
 
 	game->addSeparator();
 	game->addAction("&Quit", QApplication::instance(), SLOT(quit()), QKeySequence::Quit);
@@ -63,15 +73,18 @@ void MainWindow::makeMove(BoardIndex row, BoardIndex column)
 		mbx.exec();
 
 		resetGame();
-    }
+	}
 	else {
 		if(currentTurn == T_RED) {
 			// ask AI player to do something.
-			// TODO: move this into worker
-			setCurrentPlayer(T_WHITE);
-			AIPlayerWorker* worker = new AIPlayerWorker(whitePlayerAgent);
-			connect(worker, SIGNAL(moveDecided(MoveResult*)), this, SLOT(makeMove(MoveResult*)));
-			worker->startMove( gbw->gameBoard());
+			queueAIMove(whitePlayerAgent, T_WHITE);
+		}
+		else if(currentTurn == T_WHITE) {
+			if(redai) {
+				queueAIMove(redPlayerAgent, T_RED);
+			} else {
+				setCurrentPlayer(T_RED);
+			}
 		}
 	}
 }
@@ -80,7 +93,6 @@ void MainWindow::makeMove(MoveResult *m)
 {
 	if(m->player() == currentTurn) {
 		makeMove(m->move().row, m->move().column);
-		setCurrentPlayer(T_RED);
 	}
 }
 
@@ -124,16 +136,28 @@ void MainWindow::resetGame()
 	if(whitePlayerAgent) {
 		delete whitePlayerAgent;
 	}
-
+	if(redPlayerAgent) {
+		delete redPlayerAgent;
+	}
 	whitePlayerAgent = new MinMaxAgent(T_WHITE);
 
-    setCurrentPlayer(T_RED);
+	if(redai) {
+		redPlayerAgent = new MinMaxAgent(T_RED);
+
+		queueAIMove(redPlayerAgent, T_RED);
+	}
+}
+
+void MainWindow::AIGame()
+{
+	redai = !redai;
+	resetGame();
 }
 
 void MainWindow::playerClick(BoardIndex row, BoardIndex column)
 {
 	if(gbw->gameBoard()->getColour(row,column) == T_EMPTY) {
-		if(currentTurn == T_RED) {
+		if(currentTurn == T_RED && !redai) {
 			makeMove(row, column);
 		}
 	}
