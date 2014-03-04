@@ -7,7 +7,18 @@ class GameBoard;
 
 class Agent
 {
+protected:
+
+	TokenColour playerColour;
+
 public:
+
+	Agent(TokenColour tc)
+		: playerColour(tc) {}
+
+	TokenColour colour() const
+	{ return playerColour; }
+
 	virtual Move calculateMove(const GameBoard& board) = 0;
 
 	virtual ~Agent(){}
@@ -15,8 +26,7 @@ public:
 
 class MinMaxAgent : public Agent
 {
-	TokenColour playerColour;
-    unsigned int tally;
+	unsigned int tally;
 
     float utility(const GameBoard& board);
 

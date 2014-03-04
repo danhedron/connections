@@ -18,7 +18,5 @@ void AIPlayerWorker::startMove(GameBoard* gbw)
 void AIPlayerWorker::decideNextMove()
 {
     Move m = agent->calculateMove(*gameBoard);
-    emit moveDecided(new MoveResult(m));
+	emit moveDecided(new MoveResult(m, agent->colour(), this));
 }
-
-

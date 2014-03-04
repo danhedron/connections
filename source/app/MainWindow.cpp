@@ -64,12 +64,24 @@ void MainWindow::makeMove(BoardIndex row, BoardIndex column)
 
 		resetGame();
     }
+	else {
+		if(currentTurn == T_RED) {
+			// ask AI player to do something.
+			// TODO: move this into worker
+			setCurrentPlayer(T_WHITE);
+			AIPlayerWorker* worker = new AIPlayerWorker(whitePlayerAgent);
+			connect(worker, SIGNAL(moveDecided(MoveResult*)), this, SLOT(makeMove(MoveResult*)));
+			worker->startMove( gbw->gameBoard());
+		}
+	}
 }
 
 void MainWindow::makeMove(MoveResult *m)
 {
-    makeMove(m->move().row, m->move().column);
-    setCurrentPlayer(T_RED);
+	if(m->player() == currentTurn) {
+		makeMove(m->move().row, m->move().column);
+		setCurrentPlayer(T_RED);
+	}
 }
 
 void MainWindow::setCurrentPlayer(TokenColour player)
@@ -123,14 +135,6 @@ void MainWindow::playerClick(BoardIndex row, BoardIndex column)
 	if(gbw->gameBoard()->getColour(row,column) == T_EMPTY) {
 		if(currentTurn == T_RED) {
 			makeMove(row, column);
-		}
-		if(! gbw->gameBoard()->isEndGame()) {
-			// ask AI player to do something.
-			// TODO: move this into worker
-            setCurrentPlayer(T_WHITE);
-            AIPlayerWorker* worker = new AIPlayerWorker(whitePlayerAgent);
-            connect(worker, SIGNAL(moveDecided(MoveResult*)), this, SLOT(makeMove(MoveResult*)));
-            worker->startMove( gbw->gameBoard());
 		}
 	}
 }

@@ -7,7 +7,7 @@
 #include <algorithm>
 
 MinMaxAgent::MinMaxAgent(TokenColour player)
-    : playerColour(player), tally(0)
+	: Agent(player), tally(0)
 {
 
 }

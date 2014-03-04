@@ -7,14 +7,19 @@
 class MoveResult : public QObject
 {
     Move m;
+	TokenColour p;
 
 public:
 
-    MoveResult(const Move& m) : m(m)
+	MoveResult(const Move& m, TokenColour c, QObject* parent)
+		: QObject(parent), m(m), p(c)
     {}
 
     const Move& move() const
     { return m; }
+
+	TokenColour player() const
+	{ return p; }
 };
 
 class AIPlayerWorker : public QObject
