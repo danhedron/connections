@@ -7,6 +7,7 @@
 
 class GameBoardWidget;
 class Agent;
+class MoveResult;
 
 class MainWindow : public QMainWindow
 {
@@ -28,9 +29,12 @@ public:
 
 	MainWindow(QWidget* parent = 0, Qt::WindowFlags flags = 0);
 
-	void makeMove(BoardIndex row, BoardIndex column);
-
 	void setCurrentPlayer(TokenColour player);
+
+public slots:
+
+    void makeMove(BoardIndex row, BoardIndex column);
+    void makeMove(MoveResult*);
 
 private slots:
 
