@@ -7,7 +7,7 @@
 #include <algorithm>
 
 MinMaxAgent::MinMaxAgent(TokenColour player)
-	: Agent(player), tally(0)
+	: Agent(player), tally(0), rengine(rdevice())
 {
 
 }
@@ -140,19 +140,24 @@ float MinMaxAgent::value(const GameBoard &board, bool player, float al, float be
 
 Move MinMaxAgent::calculateMove(const GameBoard& board)
 {
-    tally = 0;
+	tally = 0;
 	auto moves = board.availableMoves();
-	Move best;
-    float bestScore = -std::numeric_limits<float>::max();
-    for(auto& move : moves) {
-        auto v = value(board.apply(move, playerColour), false,
-                       std::numeric_limits<float>::lowest(),
-                       std::numeric_limits<float>::max(), 1);
-        if(v > bestScore) {
-            bestScore = v;
-			best = move;
-        }
+	float bestScore = -std::numeric_limits<float>::max();
+	std::vector<Move> topMoves;
+	for(auto& move : moves) {
+		auto v = value(board.apply(move, playerColour), false,
+					   std::numeric_limits<float>::lowest(),
+					   std::numeric_limits<float>::max(), 1);
+		if(v > bestScore) {
+			bestScore = v;
+			topMoves.clear();
+			topMoves.push_back(move);
+		}
+		else if(! (v < bestScore) ) {
+			topMoves.push_back(move);
+		}
 	}
-    std::cout << "Evaulated " << tally << " states" << std::endl;
-	return best;
+	std::cout << "Evaulated " << tally << " states" << std::endl;
+	std::uniform_int_distribution<int> unidist(0, topMoves.size()-1);
+	return topMoves.at(unidist(rengine));
 }

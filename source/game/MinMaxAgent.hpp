@@ -2,6 +2,7 @@
 #ifndef _MINMAXAGENT_HPP_
 #define _MINMAXAGENT_HPP_
 #include "GameTypes.hpp"
+#include <random>
 
 class GameBoard;
 
@@ -27,6 +28,9 @@ public:
 class MinMaxAgent : public Agent
 {
 	unsigned int tally;
+
+	std::random_device rdevice;
+	std::default_random_engine rengine;
 
     float utility(const GameBoard& board);
 
