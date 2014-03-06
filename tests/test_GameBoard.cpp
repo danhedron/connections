@@ -97,4 +97,70 @@ BOOST_AUTO_TEST_CASE(Board_Test_GameOver)
     BOOST_CHECK( br.getWinner() == T_RED );
 }
 
+BOOST_AUTO_TEST_CASE(Board_Test_EndGame_Boxin)
+{
+	{
+		GameBoard board(5);
+
+		board.putToken(0, 0, T_RED);
+		board.putToken(0, 1, T_RED);
+		board.putToken(0, 2, T_RED);
+		board.putToken(1, 0, T_RED);
+		board.putToken(1, 3, T_RED);
+		board.putToken(2, 0, T_RED);
+		board.putToken(2, 1, T_RED);
+		board.putToken(2, 2, T_RED);
+
+		board.putToken(1, 1, T_WHITE);
+
+		board.printBoard();
+
+		BOOST_CHECK( board.isEndGame());
+	}
+
+	{
+		GameBoard board(5);
+
+		board.putToken(0, 0, T_RED);
+		board.putToken(1, 0, T_RED);
+		board.putToken(1, 1, T_RED);
+		board.putToken(2, 0, T_RED);
+
+		board.printBoard();
+
+		BOOST_CHECK( board.isEndGame());
+	}
+
+	{
+		GameBoard board(5);
+		board.putToken(1, 1, T_RED);
+		board.putToken(2, 1, T_RED);
+		board.putToken(2, 0, T_RED);
+		board.putToken(3, 1, T_RED);
+
+		board.printBoard();
+
+		BOOST_CHECK(! board.isEndGame());
+	}
+
+	{
+		GameBoard board(5);
+		board.putToken(1, 1, T_RED);
+		board.putToken(2, 1, T_RED);
+		board.putToken(2, 0, T_RED);
+
+		board.printBoard();
+
+		BOOST_CHECK(! board.isEndGame());
+	}
+
+	if(false) {
+		GameBoard board(5);
+		board.putToken(2, 1, T_RED);
+		board.putToken(2, 0, T_RED);
+
+		BOOST_CHECK(! board.isEndGame());
+	}
+}
+
 BOOST_AUTO_TEST_SUITE_END()

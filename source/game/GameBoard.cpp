@@ -168,48 +168,12 @@ bool GameBoard::isEndGame() const
 
 TokenColour GameBoard::getWinner() const
 {
-	for(BoardIndex r = 1; r < rows.size(); r += 2) {
-        if(getColour(r, 0) != T_WHITE) { continue; }
-		std::list<Move> open;
-		open.push_back({r, 0});
-		std::vector<Move> closed;
-		while(!open.empty()) {
-			Move& t = open.front();
-			closed.push_back(t);
-			if(t.column == getRowSize(r)-1) {
-				return T_WHITE;
-			}
-			auto adjacents = getAdjacentPoints(t.row, t.column);
-			for(Move& m : adjacents) {
-				if(getColour(m.row, m.column) != T_WHITE) { continue; }
-				if(std::find(open.begin(), open.end(), m) != open.end()) { continue; }
-				if(std::find(closed.begin(), closed.end(), m) != closed.end()) { continue; }
-				open.push_back(m);
-			}
-			open.pop_front();
-		}
-	}
-	for(BoardIndex c = 0; c < getRowSize(1); c += 1) {
-        if(getColour(1, c) != T_RED) { continue; }
-		std::list<Move> open;
-		open.push_back({1, c});
-		std::vector<Move> closed;
-		while(!open.empty()) {
-			Move& t = open.front();
-			closed.push_back(t);
-			if(t.row == rows.size()-2) {
-				return T_RED;
-			}
-			auto adjacents = getAdjacentPoints(t.row, t.column);
-			for(Move& m : adjacents) {
-				if(getColour(m.row, m.column) != T_RED) { continue; }
-				if(std::find(open.begin(), open.end(), m) != open.end()) { continue; }
-				if(std::find(closed.begin(), closed.end(), m) != closed.end()) { continue; }
-				open.push_back(m);
-			}
-			open.pop_front();
-		}
-	}
+	TokenColour ab = getAcrossBoardWinner();
+	if(ab != T_EMPTY) return ab;
+
+	TokenColour bi = getBoxInWinner();
+	if(bi != T_EMPTY) return bi;
+
 	return T_EMPTY;
 }
 
@@ -240,5 +204,137 @@ void GameBoard::printBoard(std::string prefix) const
             }
         }
         std::cout << rowesc << " · " << "\033[39m" << std::endl;
-    }
+	}
+}
+
+TokenColour GameBoard::getAcrossBoardWinner() const
+{
+	for(BoardIndex r = 1; r < rows.size(); r += 2) {
+		if(getColour(r, 0) != T_WHITE) { continue; }
+		std::list<Move> open;
+		open.push_back({r, 0});
+		std::vector<Move> closed;
+		while(!open.empty()) {
+			Move& t = open.front();
+			closed.push_back(t);
+			if(t.column == getRowSize(r)-1) {
+				return T_WHITE;
+			}
+			auto adjacents = getAdjacentPoints(t.row, t.column);
+			for(Move& m : adjacents) {
+				if(getColour(m.row, m.column) != T_WHITE) { continue; }
+				if(std::find(open.begin(), open.end(), m) != open.end()) { continue; }
+				if(std::find(closed.begin(), closed.end(), m) != closed.end()) { continue; }
+				open.push_back(m);
+			}
+			open.pop_front();
+		}
+	}
+	for(BoardIndex c = 0; c < getRowSize(1); c += 1) {
+		if(getColour(1, c) != T_RED) { continue; }
+		std::list<Move> open;
+		open.push_back({1, c});
+		std::vector<Move> closed;
+		while(!open.empty()) {
+			Move& t = open.front();
+			closed.push_back(t);
+			if(t.row == rows.size()-2) {
+				return T_RED;
+			}
+			auto adjacents = getAdjacentPoints(t.row, t.column);
+			for(Move& m : adjacents) {
+				if(getColour(m.row, m.column) != T_RED) { continue; }
+				if(std::find(open.begin(), open.end(), m) != open.end()) { continue; }
+				if(std::find(closed.begin(), closed.end(), m) != closed.end()) { continue; }
+				open.push_back(m);
+			}
+			open.pop_front();
+		}
+	}
+	return T_EMPTY;
+}
+
+TokenColour GameBoard::getBoxInWinner() const
+{
+	/* foreach t in board
+	 *  if has return path()
+	 *   return t's colour.
+	 *
+	 * has return path(point, source, target)
+	 *  if point == target return true
+	 *  foreach adjacent(point) - source
+	 *   if return path(adj, point, target) return true
+	 *  return false
+	 */
+
+	for(BoardIndex r = 0; r < getBoardLength(); ++r) {
+		for(BoardIndex c = 0; c < getRowSize(c); ++c) {
+			TokenColour lc = getColour(r ,c);
+			if(lc != T_EMPTY) {
+				auto adj = getAdjacentPoints(r, c);
+				for(auto& a : adj) {
+					if(getColour(a.row, a.column) != lc) continue;
+					if (hasReturnPath(a, {r,c}, {r,c}, {})) {
+						return lc;
+					}
+				}
+			}
+		}
+	}
+
+	return T_EMPTY;
+}
+
+bool GameBoard::canFollowPath(const Move &source, const Move &point, const Move &exit) const
+{
+	if(source == exit) return false;
+	TokenColour lc = getColour(point.row, point.column);
+	TokenColour rc = getRowColour(point.row);
+	bool vertical = lc != rc;
+	if(vertical) {
+		if(source.row > point.row) {
+			if(exit.row >= source.row) return false;
+		}
+		if(source.row < point.row) {
+			if(exit.row <= source.row) return false;
+		}
+	}
+	else {
+		if(rc == T_RED) {
+			if(source.column <= point.column) {
+				if(exit.column <= point.column) return false;
+			}
+			else if(source.column > point.column) {
+				if(exit.column > point.column) return false;
+			}
+		}
+		else {
+			if(source.column < point.column) {
+				if(exit.column < point.column) return false;
+			}
+			else if(source.column >= point.column) {
+				if(exit.column >= point.column) return false;
+			}
+		}
+	}
+	return true;
+}
+
+bool GameBoard::hasReturnPath(const Move &point, const Move &source, const Move &target, std::vector<Move> history) const
+{
+	if(point == target) return true;
+	if(std::find(history.begin(), history.end(), point)  != history.end()) return true;
+	history.push_back(source);
+	auto lc = getColour(point.row, point.column);
+	auto adj = getAdjacentPoints(point.row, point.column);
+	for(auto& a : adj) {
+		if(getColour(a.row, a.column) != lc) continue;
+		if(! canFollowPath(source, point, a)) {
+			continue;
+		}
+		if(hasReturnPath(a, point, target, history)) {
+			return true;
+		}
+	}
+	return false;
 }

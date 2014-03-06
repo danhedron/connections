@@ -88,6 +88,12 @@ public:
 
     /** Prints board to stdout */
     void printBoard(std::string prefix="") const;
+
+private:
+	TokenColour getAcrossBoardWinner() const;
+	TokenColour getBoxInWinner() const;
+	bool canFollowPath(const Move& source, const Move& point, const Move& exit) const;
+	bool hasReturnPath(const Move& point, const Move& source, const Move& target, std::vector<Move> history) const;
 };
 
 #endif

@@ -134,7 +134,7 @@ float MinMaxAgent::value(const GameBoard &board, bool player, float al, float be
                                          al, bet, !player, d+1));
             if(bet <= al) return al;
         }
-        return bet;
+		return bet;
     }
 }
 
