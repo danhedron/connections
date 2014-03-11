@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE(Row_Test)
 
 BOOST_AUTO_TEST_CASE(Board_Test)
 {
-	GameBoard board(5);	
+	GameBoard board(5);
 
 	board.putToken(1, 2, T_WHITE);
 	board.putToken(2, 2, T_WHITE);
@@ -41,6 +41,17 @@ BOOST_AUTO_TEST_CASE(Board_Test)
 
 	BOOST_CHECK_EQUAL( board.getOrientation(1, 3), O_VERTICAL);
 	BOOST_CHECK_EQUAL( board.getOrientation(2, 3), O_HORIZONTAL);
+}
+
+BOOST_AUTO_TEST_CASE(Board_Test_Size)
+{
+	GameBoard board(5);
+
+	BOOST_CHECK(board.getBoardLength() == 11);
+	BOOST_CHECK(board.getRowSize(0) == 4);
+	BOOST_CHECK(board.getRowSize(10) == 4);
+	BOOST_CHECK(board.getRowSize(1) == 5);
+	BOOST_CHECK(board.getRowSize(2) == 6);
 }
 
 BOOST_AUTO_TEST_CASE(Board_Test_Reset)
@@ -160,6 +171,22 @@ BOOST_AUTO_TEST_CASE(Board_Test_EndGame_Boxin)
 		board.putToken(2, 0, T_RED);
 
 		BOOST_CHECK(! board.isEndGame());
+	}
+}
+
+
+BOOST_AUTO_TEST_CASE(Board_Test_Adjacent)
+{
+	GameBoard board(5);
+
+	for(BoardIndex r = 0; r < board.getBoardLength(); ++r) {
+		for(BoardIndex c = 0; c < board.getRowSize(r); ++c) {
+			auto adjacents = board.getAdjacentPoints(r, c);
+			for(auto& adj : adjacents) {
+				BOOST_CHECK_MESSAGE(board.getRowSize(adj.row) > adj.column,
+							"RowSize = " << board.getRowSize(adj.row) << " r = " << r << " c = " << c);
+			}
+		}
 	}
 }
 

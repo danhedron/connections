@@ -7,27 +7,31 @@
 
 /**
  * Rough notes on grid layout
- * Game board is roughly octagonal
  *
- * 11 Rows of alternating length (4 : 5)
  * Token states := 
  *   Horizontal (Connecting within row)
  *   Vertical (Connecting adjacent rows) 
  * Token Orientation :=
  *   Row Colour => Horizontal
  *   !Row Colour => Vertical
+ *
  * Visual Example
  *  N· · · · ·N
  *  · · · · · ·
- *  N· · · · ·N
+ *  |· · · · ·|
+ *  · · · · · ·
+ *  |· · · · ·|
+ *  · · · · · ·
+ *  |· · · · ·|
+ *  · · · · · ·
+ *  |· · · · ·|
  *  · · · · · ·
  *  N· · · · ·N
- *  · · · · · ·
- *  N· · · · ·N
- *  · · · · · ·
- *  N· · · · ·N
- *  · · · · · ·
- *  N· · · · ·N
+ *
+ *  Alternate Row Lengths
+ *   N, N + 1
+ *  Terminal Row Length
+ *   N - 1
  *  
  */
 
@@ -56,7 +60,8 @@ public:
 
 class GameBoard
 {
-	std::vector<BoardRow> rows;
+	std::vector<BoardRow> _rows;
+	BoardIndex _length;
 public:
 	GameBoard(BoardIndex length);
 
@@ -66,7 +71,11 @@ public:
 
 	TokenOrientation getOrientation(BoardIndex row, BoardIndex i) const;
 
+	BoardIndex getRunSize() const;
+
 	BoardIndex getRowSize(BoardIndex row) const;
+
+	bool isTerminalRow(BoardIndex row) const;
 
 	TokenColour getRowColour(BoardIndex row) const;
 

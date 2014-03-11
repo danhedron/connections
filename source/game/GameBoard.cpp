@@ -32,35 +32,51 @@ TokenOrientation BoardRow::getOrientation(BoardIndex i) const
 }
 
 GameBoard::GameBoard(BoardIndex length)
+	: _length(length)
 {
-	rows.reserve((length*2)+1);
+	_rows.reserve((length*2)+1);
 	for(unsigned int r = 0; r < (length*2)+1; ++r) {
-		rows.push_back(BoardRow(r%2?T_WHITE:T_RED, (r%2!=0)?5:4));
+		_rows.push_back(BoardRow(getRowColour(r), getRowSize(r)));
 	}
 }
 
 void GameBoard::putToken(BoardIndex row, BoardIndex i, TokenColour t)
 {
-	assert(row < rows.size());
-	rows[row].putToken(i, t);
+	assert(row < _rows.size());
+	_rows[row].putToken(i, t);
 }
 
 TokenColour GameBoard::getColour(BoardIndex row, BoardIndex i) const
 {
-	assert(row < rows.size());
-	return rows[row].getColour(i);
+	assert(row < _rows.size());
+	return _rows[row].getColour(i);
 }
 
 TokenOrientation GameBoard::getOrientation(BoardIndex row, BoardIndex i) const
 {
-	assert(row < rows.size());
-	return rows[row].getOrientation(i);
+	assert(row < _rows.size());
+	return _rows[row].getOrientation(i);
+}
+
+BoardIndex GameBoard::getRunSize() const
+{
+	return _length;
 }
 
 BoardIndex GameBoard::getRowSize(BoardIndex row) const
 {
-	BoardIndex sz = (rows.size()-1)/2;
-	return ((row%2!=0)? sz : sz-1);
+	auto run = getRunSize();
+	if(isTerminalRow(row)) {
+		return run-1;
+	}
+	return (getRowColour(row)==T_RED? run+1 : run);
+}
+
+bool GameBoard::isTerminalRow(BoardIndex row) const
+{
+	if(row == 0) return true;
+	if(getBoardLength()-1 == row) return true;
+	return false;
 }
 
 TokenColour GameBoard::getRowColour(BoardIndex row) const
@@ -70,13 +86,13 @@ TokenColour GameBoard::getRowColour(BoardIndex row) const
 
 BoardIndex GameBoard::getBoardLength() const
 {
-	return rows.size();
+	return (_length*2)+1;
 }
 
 std::vector<Move> GameBoard::availableMoves() const
 {
 	std::vector<Move> moves;
-	for(unsigned int r = 0; r < rows.size(); ++r) {
+	for(unsigned int r = 0; r < _rows.size(); ++r) {
 		for(unsigned int c = 0; c < getRowSize(r); ++c) {
             if(getColour(r, c) == T_EMPTY) {
 				moves.push_back({r, c});
@@ -88,9 +104,9 @@ std::vector<Move> GameBoard::availableMoves() const
 
 void GameBoard::reset()
 {
-	for(unsigned int r = 0; r < rows.size(); ++r) {
+	for(unsigned int r = 0; r < _rows.size(); ++r) {
 		for(unsigned int c = 0; c < getRowSize(r); ++c) {
-			rows[r].putToken(c, T_EMPTY);
+			_rows[r].putToken(c, T_EMPTY);
 		}
 	}
 }
@@ -104,7 +120,7 @@ std::vector<Move> GameBoard::getAdjacentPoints(BoardIndex r, BoardIndex c) const
 			points.push_back({ r-1, c });
 			points.push_back({ r-1, c+1 });
 		}
-		if( r < rows.size() -1 ) {
+		if( r < _rows.size() -1 ) {
 			points.push_back({ r+1, c });
 			points.push_back({ r+1, c+1 });
 		}
@@ -120,7 +136,7 @@ std::vector<Move> GameBoard::getAdjacentPoints(BoardIndex r, BoardIndex c) const
 			if( r > 3 ) {
 				points.push_back({ r-2, c });
 			}
-			if( r < rows.size()-3 ) {
+			if( r < _rows.size()-3 ) {
 				points.push_back({ r+2, c });
 			}
 		}
@@ -138,7 +154,7 @@ std::vector<Move> GameBoard::getAdjacentPoints(BoardIndex r, BoardIndex c) const
 			if( r > 2 ) {
 				points.push_back({ r-2, c });
 			}
-			if( r < rows.size()-2 ) {
+			if( r < _rows.size()-2 ) {
 				points.push_back({ r+2, c });
 			}
 		}
@@ -209,7 +225,7 @@ void GameBoard::printBoard(std::string prefix) const
 
 TokenColour GameBoard::getAcrossBoardWinner() const
 {
-	for(BoardIndex r = 1; r < rows.size(); r += 2) {
+	for(BoardIndex r = 1; r < _rows.size(); r += 2) {
 		if(getColour(r, 0) != T_WHITE) { continue; }
 		std::list<Move> open;
 		open.push_back({r, 0});
@@ -238,7 +254,7 @@ TokenColour GameBoard::getAcrossBoardWinner() const
 		while(!open.empty()) {
 			Move& t = open.front();
 			closed.push_back(t);
-			if(t.row == rows.size()-2) {
+			if(t.row == _rows.size()-2) {
 				return T_RED;
 			}
 			auto adjacents = getAdjacentPoints(t.row, t.column);
@@ -268,7 +284,7 @@ TokenColour GameBoard::getBoxInWinner() const
 	 */
 
 	for(BoardIndex r = 0; r < getBoardLength(); ++r) {
-		for(BoardIndex c = 0; c < getRowSize(c); ++c) {
+		for(BoardIndex c = 0; c < getRowSize(r); ++c) {
 			TokenColour lc = getColour(r ,c);
 			if(lc != T_EMPTY) {
 				auto adj = getAdjacentPoints(r, c);
