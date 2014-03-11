@@ -83,6 +83,8 @@ public:
 
 	std::vector<Move> getAdjacentPoints(BoardIndex r, BoardIndex c) const;
 
+	std::vector<Move> getAdjacentPoints(BoardIndex r, BoardIndex c, TokenColour tc) const;
+
 	void makeMove(const Move& m);
 
 	std::vector<Move> availableMoves() const;

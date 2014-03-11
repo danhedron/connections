@@ -113,8 +113,13 @@ void GameBoard::reset()
 
 std::vector<Move> GameBoard::getAdjacentPoints(BoardIndex r, BoardIndex c) const
 {
-	std::vector<Move> points;
 	TokenColour tc = getColour(r, c);
+	return getAdjacentPoints(r, c, tc);
+}
+
+std::vector<Move> GameBoard::getAdjacentPoints(BoardIndex r, BoardIndex c, TokenColour tc) const
+{
+	std::vector<Move> points;
 	if(getRowColour(r) == T_RED) {
 		if( r > 0 ) {
 			points.push_back({ r-1, c });
