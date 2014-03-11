@@ -66,9 +66,6 @@ BoardIndex GameBoard::getRunSize() const
 BoardIndex GameBoard::getRowSize(BoardIndex row) const
 {
 	auto run = getRunSize();
-	if(isTerminalRow(row)) {
-		return run-1;
-	}
 	return (getRowColour(row)==T_RED? run+1 : run);
 }
 
@@ -117,59 +114,50 @@ std::vector<Move> GameBoard::getAdjacentPoints(BoardIndex r, BoardIndex c) const
 	return getAdjacentPoints(r, c, tc);
 }
 
+void addIfValid(std::vector<Move>& p, const GameBoard* b, BoardIndex r, BoardIndex c)
+{
+	if(r > b->getBoardLength()) return;
+	if(c > b->getRowSize(r)) return;
+	if(r == 0 || r == b->getBoardLength()-1) {
+		if(c == 0) return;
+		if(c == b->getRowSize(r)-1) return;
+	}
+	p.push_back({r,c});
+}
+
 std::vector<Move> GameBoard::getAdjacentPoints(BoardIndex r, BoardIndex c, TokenColour tc) const
 {
 	std::vector<Move> points;
 	if(getRowColour(r) == T_RED) {
-		if( r > 0 ) {
-			points.push_back({ r-1, c });
-			points.push_back({ r-1, c+1 });
-		}
-		if( r < _rows.size() -1 ) {
-			points.push_back({ r+1, c });
-			points.push_back({ r+1, c+1 });
-		}
+		addIfValid(points, this, r-1, c + 1);
+		addIfValid(points, this, r-1, c    );
+
+		addIfValid(points, this, r+1, c - 1);
+		addIfValid(points, this, r+1, c    );
+
 		if( tc == T_RED ) {
-			if( c > 0 ) {
-				points.push_back({ r, c-1 });
-			}
-			if( c < getRowSize(r)-1 ) {
-				points.push_back({ r, c+1 });
-			}
+			addIfValid(points, this, r, c-1);
+			addIfValid(points, this, r, c+1);
 		}
 		else if( tc == T_WHITE ) {
-			if( r > 3 ) {
-				points.push_back({ r-2, c });
-			}
-			if( r < _rows.size()-3 ) {
-				points.push_back({ r+2, c });
-			}
+			addIfValid(points, this, r-2, c);
+			addIfValid(points, this, r+2, c);
 		}
 	}
 	else {
-		if( c > 0 ) {
-			points.push_back({ r-1, c-1 });
-			points.push_back({ r+1, c-1 });
-		}
-		if( c < getRowSize(r)-1 ) {
-			points.push_back({ r-1, c });
-			points.push_back({ r+1, c });
-		}
+		addIfValid(points, this, r-1, c  );
+		addIfValid(points, this, r-1, c+1);
+
+		addIfValid(points, this, r+1, c  );
+		addIfValid(points, this, r+1, c+1);
+
 		if(tc == T_RED) {
-			if( r > 2 ) {
-				points.push_back({ r-2, c });
-			}
-			if( r < _rows.size()-2 ) {
-				points.push_back({ r+2, c });
-			}
+			addIfValid(points, this, r-2, c);
+			addIfValid(points, this, r+2, c);
 		}
 		else if(tc == T_WHITE) {
-			if( c > 0 ) {
-				points.push_back({ r, c-1 });
-			}
-			if( c < getRowSize(r)-1 ) {
-				points.push_back({ r, c+1 });
-			}
+			addIfValid(points, this, r, c-1);
+			addIfValid(points, this, r, c+1);
 		}
 	}
 	return points;
@@ -211,11 +199,12 @@ std::string toksym(TokenOrientation o) {
 void GameBoard::printBoard(std::string prefix) const
 {
     for(size_t r = 0; r < getBoardLength(); ++r) {
+		auto rc = getRowColour(r);
         std::cout << prefix;
-        std::cout << (getRowColour(r) == T_RED ? "  " : "");
+		std::cout << (rc == T_RED ? "" : "");
         std::string rowesc = colesc(getRowColour(r));
+		if(rc == T_WHITE) std::cout << "· ";
         for(size_t c = 0; c < getRowSize(r); ++c) {
-            std::cout << rowesc << " · ";
             if(getColour(r, c) != T_EMPTY) {
                 std::cout << colesc(getColour(r, c));
                 std::cout << toksym(getOrientation(r, c));
@@ -223,8 +212,11 @@ void GameBoard::printBoard(std::string prefix) const
             else {
                 std::cout << " ";
             }
+			if(rc == T_WHITE || c < getRowSize(r)-1) {
+				std::cout << rowesc << " · ";
+			}
         }
-        std::cout << rowesc << " · " << "\033[39m" << std::endl;
+		std::cout << rowesc << "\033[39m" << std::endl;
 	}
 }
 
