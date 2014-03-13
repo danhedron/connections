@@ -165,6 +165,27 @@ BOOST_AUTO_TEST_CASE(Board_Test_EndGame_Boxin)
 		BOOST_CHECK(! board.isEndGame());
 	}
 
+	{
+		GameBoard board(5);
+		board.putToken(3, 1, T_RED);
+		board.putToken(4, 2, T_RED);
+		board.putToken(3, 2, T_RED);
+
+		board.printBoard();
+
+		BOOST_CHECK(! board.isEndGame());
+	}
+	{
+		GameBoard board(5);
+		board.putToken(4, 1, T_WHITE);
+		board.putToken(5, 1, T_WHITE);
+		board.putToken(4, 2, T_WHITE);
+
+		board.printBoard();
+
+		BOOST_CHECK(! board.isEndGame());
+	}
+
 	if(false) {
 		GameBoard board(5);
 		board.putToken(2, 1, T_RED);
