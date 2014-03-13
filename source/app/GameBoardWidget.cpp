@@ -9,9 +9,9 @@ const int halftile = tilesize / 2;
 
 QPointF GameBoardWidget::calculateTilePosition(BoardIndex row, BoardIndex col) const
 {
-	int rf = halftile;
-	if(board->getRowColour(row) == T_RED) {
-		rf = tilesize;
+	int rf = 0;
+	if(board->getRowColour(row) == T_WHITE) {
+		rf = halftile;
 	}
     return QPointF(leftMargin + rf + col * tilesize, halftile + row * halftile);
 }
@@ -50,7 +50,9 @@ void GameBoardWidget::paintEvent(QPaintEvent*)
                 QPointF t = calculateTilePosition(r, c);
                 p.setTransform(btr);
                 p.setTransform(QTransform::fromTranslate(t.x(), t.y()), true);
-                p.fillRect(QRectF(-25, -5, 10, 10), board->getRowColour(r) == T_RED ? Qt::red : Qt::white);
+				if((c != 0 && c != board->getRowSize(r)) || board->getRowColour(r) == T_WHITE) {
+					p.fillRect(QRectF(-25, -5, 10, 10), board->getRowColour(r) == T_RED ? Qt::red : Qt::white);
+				}
 				if( c < board->getRowSize(r) ) {
 					// Draw token
 					auto s = board->getColour(r, c);

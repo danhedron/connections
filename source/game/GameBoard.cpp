@@ -35,7 +35,7 @@ GameBoard::GameBoard(BoardIndex length)
 	: _length(length)
 {
 	_rows.reserve((length*2)+1);
-	for(unsigned int r = 0; r < (length*2)+1; ++r) {
+	for(unsigned int r = 0; r < getBoardLength(); ++r) {
 		_rows.push_back(BoardRow(getRowColour(r), getRowSize(r)));
 	}
 }
@@ -116,8 +116,8 @@ std::vector<Move> GameBoard::getAdjacentPoints(BoardIndex r, BoardIndex c) const
 
 void addIfValid(std::vector<Move>& p, const GameBoard* b, BoardIndex r, BoardIndex c)
 {
-	if(r > b->getBoardLength()) return;
-	if(c > b->getRowSize(r)) return;
+	if(r >= b->getBoardLength()) return;
+	if(c >= b->getRowSize(r)) return;
 	if(r == 0 || r == b->getBoardLength()-1) {
 		if(c == 0) return;
 		if(c == b->getRowSize(r)-1) return;
