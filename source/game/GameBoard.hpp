@@ -93,9 +93,9 @@ public:
 
 	void reset();
 
-	bool isEndGame() const;
+	bool isEndGame(WinType* wt = nullptr) const;
 
-	TokenColour getWinner() const;
+	TokenColour getWinner(WinType *wt = nullptr) const;
 
     /** Prints board to stdout */
     void printBoard(std::string prefix="") const;
@@ -103,6 +103,7 @@ public:
 private:
 	TokenColour getAcrossBoardWinner() const;
 	TokenColour getBoxInWinner() const;
+public:
 	bool canFollowPath(const Move& source, const Move& point, const Move& exit) const;
 	bool hasReturnPath(const Move& point, const Move& source, const Move& target, std::vector<Move> history) const;
 };

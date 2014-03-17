@@ -129,7 +129,7 @@ std::vector<Move> GameBoard::getAdjacentPoints(BoardIndex r, BoardIndex c, Token
 {
 	std::vector<Move> points;
 	if(getRowColour(r) == T_RED) {
-		addIfValid(points, this, r-1, c + 1);
+		addIfValid(points, this, r-1, c - 1);
 		addIfValid(points, this, r-1, c    );
 
 		addIfValid(points, this, r+1, c - 1);
@@ -170,23 +170,28 @@ GameBoard GameBoard::apply(const Move &m, TokenColour c) const
     return gb;
 }
 
-bool GameBoard::isEndGame() const
+bool GameBoard::isEndGame(WinType *wt) const
 {
-    return getWinner() != T_EMPTY;
+	return getWinner(wt) != T_EMPTY;
 }
 
-TokenColour GameBoard::getWinner() const
+TokenColour GameBoard::getWinner(WinType *wt) const
 {
 	TokenColour ab = getAcrossBoardWinner();
-	if(ab != T_EMPTY) return ab;
+	if(ab != T_EMPTY) {
+		if(wt != nullptr) *wt = WT_CONNECTION;
+		return ab;
+	}
 
 	TokenColour bi = getBoxInWinner();
-	if(bi != T_EMPTY) return bi;
+	if(bi != T_EMPTY) {
+		if(wt != nullptr) *wt = WT_BOXIN;
+		return bi;
+	}
 
+	if(wt != nullptr) *wt = WT_NOWIN;
 	return T_EMPTY;
 }
-
-#include <iostream>
 
 std::string colesc(TokenColour t) {
     return t == T_RED ? "\033[91m": "\033[39m";
@@ -303,31 +308,26 @@ bool GameBoard::canFollowPath(const Move &source, const Move &point, const Move 
 	if(source == exit) return false;
 	TokenColour lc = getColour(point.row, point.column);
 	TokenColour rc = getRowColour(point.row);
+
+	Move pSource = {source.row, source.column * 2 + (getRowColour(source.row)==T_WHITE?1:0)};
+	Move pPoint = {point.row,   point.column * 2  + (getRowColour(point.row)==T_WHITE?1:0)};
+	Move pExit = {exit.row,     exit.column * 2   + (getRowColour(exit.row)==T_WHITE?1:0)};
+
 	bool vertical = lc != rc;
 	if(vertical) {
-		if(source.row > point.row) {
-			if(exit.row >= source.row) return false;
+		if(pSource.row > pPoint.row) {
+			if(pExit.row >= pSource.row) return false;
 		}
-		if(source.row < point.row) {
-			if(exit.row <= source.row) return false;
+		if(pSource.row < pPoint.row) {
+			if(pExit.row <= pSource.row) return false;
 		}
 	}
 	else {
-		if(rc == T_RED) {
-			if(source.column <= point.column) {
-				if(exit.column <= point.column) return false;
-			}
-			else if(source.column > point.column) {
-				if(exit.column > point.column) return false;
-			}
+		if(pSource.column < pPoint.column) {
+			if(pExit.column < pPoint.column) return false;
 		}
-		else {
-			if(source.column < point.column) {
-				if(exit.column < point.column) return false;
-			}
-			else if(source.column >= point.column) {
-				if(exit.column >= point.column) return false;
-			}
+		if(pSource.column > pPoint.column) {
+			if(pExit.column > pPoint.column) return false;
 		}
 	}
 	return true;

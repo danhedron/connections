@@ -126,7 +126,11 @@ BOOST_AUTO_TEST_CASE(Board_Test_EndGame_Boxin)
 
 		board.printBoard();
 
-		BOOST_CHECK( board.isEndGame());
+		WinType wt = WT_NOWIN;
+
+		BOOST_CHECK( board.isEndGame(&wt) );
+
+		BOOST_CHECK_EQUAL( wt, WT_BOXIN );
 	}
 
 	{
@@ -184,6 +188,42 @@ BOOST_AUTO_TEST_CASE(Board_Test_EndGame_Boxin)
 		board.printBoard();
 
 		BOOST_CHECK(! board.isEndGame());
+	}
+	{
+		GameBoard board(5);
+		board.putToken(5, 0, T_WHITE);
+		board.putToken(5, 1, T_WHITE);
+		board.putToken(5, 2, T_WHITE);
+		board.putToken(5, 3, T_WHITE);
+
+		board.printBoard();
+
+		BOOST_CHECK(! board.isEndGame());
+	}
+	{
+		GameBoard board(5);
+		board.putToken(1, 0, T_RED);
+		board.putToken(3, 0, T_RED);
+		board.putToken(5, 0, T_RED);
+		board.putToken(6, 1, T_RED);
+		board.putToken(6, 2, T_RED);
+		board.putToken(7, 0, T_RED);
+		board.putToken(8, 1, T_RED);
+
+		board.putToken(7, 1, T_WHITE);
+		board.putToken(8, 0, T_WHITE);
+		board.putToken(8, 2, T_WHITE);
+		board.putToken(10, 0, T_WHITE);
+		board.putToken(9, 0, T_WHITE);
+		board.putToken(9, 1, T_WHITE);
+
+		board.printBoard();
+
+		WinType wt = WT_NOWIN;
+
+		BOOST_CHECK(! board.isEndGame(&wt) );
+
+		BOOST_CHECK_EQUAL( wt, WT_NOWIN);
 	}
 
 	if(false) {
@@ -249,6 +289,45 @@ BOOST_AUTO_TEST_CASE(Board_Test_Adjacent)
 			}
 		}
 	}*/
+}
+
+BOOST_AUTO_TEST_CASE(Board_Test_Path)
+{
+	{
+		GameBoard board(5);
+
+		board.putToken(0, 1, T_RED);
+		board.putToken(0, 2, T_RED);
+		board.putToken(0, 3, T_RED);
+		board.putToken(1, 0, T_RED);
+		board.putToken(1, 3, T_RED);
+		board.putToken(2, 1, T_RED);
+		board.putToken(2, 2, T_RED);
+		board.putToken(2, 3, T_RED);
+
+		board.putToken(1, 1, T_WHITE);
+
+		BOOST_CHECK(! board.canFollowPath({8,2}, {7,1}, {8,0}) );
+
+		BOOST_CHECK( board.canFollowPath({7,0}, {8,0}, {9,0}) );
+		BOOST_CHECK( board.canFollowPath({7,1}, {8,2}, {9,0}) );
+
+		BOOST_CHECK( board.canFollowPath({8,0}, {8,2}, {9,0}) );
+
+		BOOST_CHECK( board.canFollowPath({1,0}, {0,1}, {0,2}) );
+		BOOST_CHECK( board.canFollowPath({0,1}, {0,2}, {0,3}) );
+		BOOST_CHECK( board.canFollowPath({0,2}, {0,3}, {1,3}) );
+		BOOST_CHECK( board.canFollowPath({0,3}, {1,3}, {2,3}) );
+		BOOST_CHECK( board.canFollowPath({1,3}, {2,3}, {2,2}) );
+		BOOST_CHECK( board.canFollowPath({2,3}, {2,2}, {2,1}) );
+
+
+		BOOST_CHECK( board.canFollowPath({0,1}, {0,2}, {1,2}) );
+		BOOST_CHECK( board.canFollowPath({0,2}, {1,2}, {2,2}) );
+		BOOST_CHECK( board.canFollowPath({1,2}, {2,2}, {2,1}) );
+		BOOST_CHECK( board.canFollowPath({2,2}, {2,1}, {1,0}) );
+
+	}
 }
 
 BOOST_AUTO_TEST_SUITE_END()

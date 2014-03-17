@@ -23,4 +23,10 @@ enum TokenColour {
 	T_WHITE
 };
 
+enum WinType {
+	WT_NOWIN = 0,
+	WT_BOXIN = 1,
+	WT_CONNECTION = 2
+};
+
 #endif
