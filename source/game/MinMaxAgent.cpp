@@ -114,7 +114,7 @@ float MinMaxAgent::value(const GameBoard &board, bool player, float al, float be
         tbuff = tally;
     }
 
-	if(d > board.getRunSize()+3) {
+	if(d > board.getBoardLength()) {
         return eval(board);
     }
     if(board.isEndGame()) {
