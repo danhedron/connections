@@ -46,6 +46,8 @@ private slots:
 
 	void smallGame();
 
+	void mediumGame();
+
 	void normalGame();
 
 	void largeGame();

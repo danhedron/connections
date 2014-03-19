@@ -29,6 +29,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
 	size->addAction("&Tiny", this, SLOT(tinyGame()));
 	size->addAction("&Small", this, SLOT(smallGame()));
+	size->addAction("&Medium", this, SLOT(mediumGame()));
 	size->addAction("&Normal", this, SLOT(normalGame()));
 	size->addAction("&Large", this, SLOT(largeGame()));
 
@@ -122,6 +123,12 @@ void MainWindow::smallGame()
 	resetGame();
 }
 
+void MainWindow::mediumGame()
+{
+	boardSize = 4;
+	resetGame();
+}
+
 void MainWindow::normalGame()
 {
 	boardSize = 5;
@@ -130,7 +137,7 @@ void MainWindow::normalGame()
 
 void MainWindow::largeGame()
 {
-	boardSize = 5;
+	boardSize = 6;
 	resetGame();
 }
 
