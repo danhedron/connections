@@ -81,7 +81,7 @@ float MinMaxAgent::minValue(const GameBoard& oldboard, const Move& move, unsigne
     if(board.isEndGame()) {
         return utility(board);
     }
-    auto moves = board.availableMoves();
+	auto moves = board.availableMoves((playerColour == T_RED)? T_WHITE : T_RED);
     float score = std::numeric_limits<float>::max();
     for(auto& m : moves) {
         score = std::min(score, maxValue(board, m, d+1));
@@ -97,7 +97,7 @@ float MinMaxAgent::maxValue(const GameBoard& oldboard, const Move& move, unsigne
     if(board.isEndGame()) {
        return utility(board);
     }
-    auto moves = board.availableMoves();
+	auto moves = board.availableMoves(playerColour);
     float score = -std::numeric_limits<float>::max();
     for(auto& m : moves) {
         score = std::max(score, minValue(board, m, d+1));
@@ -114,7 +114,7 @@ float MinMaxAgent::value(const GameBoard &board, bool player, float al, float be
         tbuff = tally;
     }
 
-    if(d > (board.getBoardLength()-1)/2) {
+	if(d > board.getRunSize()) {
         return eval(board);
     }
     if(board.isEndGame()) {
@@ -122,14 +122,14 @@ float MinMaxAgent::value(const GameBoard &board, bool player, float al, float be
     }
 
     if(player) {
-        for(Move& m : board.availableMoves()) {
+		for(Move& m : board.availableMoves(playerColour)) {
             al = std::max(al, value(board.apply(m, playerColour), al, bet, !player, d+1));
             if(al >= bet) return bet;
         }
         return al;
     }
     else {
-        for(Move& m : board.availableMoves()) {
+		for(Move& m : board.availableMoves((playerColour==T_RED)? T_WHITE:T_RED)) {
             bet = std::min(bet, value(board.apply(m, (playerColour==T_RED)? T_WHITE:T_RED),
                                          al, bet, !player, d+1));
             if(bet <= al) return al;
@@ -141,7 +141,7 @@ float MinMaxAgent::value(const GameBoard &board, bool player, float al, float be
 Move MinMaxAgent::calculateMove(const GameBoard& board)
 {
 	tally = 0;
-	auto moves = board.availableMoves();
+	auto moves = board.availableMoves(playerColour);
 	float bestScore = -std::numeric_limits<float>::max();
 	std::vector<Move> topMoves;
 	for(auto& move : moves) {

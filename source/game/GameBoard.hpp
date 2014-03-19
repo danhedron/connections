@@ -87,7 +87,7 @@ public:
 
 	void makeMove(const Move& m);
 
-	std::vector<Move> availableMoves() const;
+	std::vector<Move> availableMoves(TokenColour tc) const;
 
 	bool isValidMove(TokenColour colour, BoardIndex r, BoardIndex c) const;
 

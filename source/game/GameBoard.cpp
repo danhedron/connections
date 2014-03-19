@@ -86,12 +86,12 @@ BoardIndex GameBoard::getBoardLength() const
 	return (_length*2)+1;
 }
 
-std::vector<Move> GameBoard::availableMoves() const
+std::vector<Move> GameBoard::availableMoves(TokenColour tc) const
 {
 	std::vector<Move> moves;
 	for(unsigned int r = 0; r < _rows.size(); ++r) {
 		for(unsigned int c = 0; c < getRowSize(r); ++c) {
-            if(getColour(r, c) == T_EMPTY) {
+			if(getColour(r, c) == T_EMPTY && isValidMove(tc, r, c)) {
 				moves.push_back({r, c});
 			}
 		}
