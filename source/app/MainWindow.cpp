@@ -27,8 +27,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 	QMenu* size = game->addMenu("&New");
 	connect(size, SIGNAL(triggered(QAction*)), this, SLOT(resetGame()));
 
-	size->addAction("&Normal", this, SLOT(normalGame()));
+	size->addAction("&Tiny", this, SLOT(tinyGame()));
 	size->addAction("&Small", this, SLOT(smallGame()));
+	size->addAction("&Normal", this, SLOT(normalGame()));
 	size->addAction("&Large", this, SLOT(largeGame()));
 
 	game->addAction("&AI Versus", this, SLOT(AIGame()));
@@ -94,6 +95,12 @@ void MainWindow::makeMove(MoveResult *m)
 	if(m->player() == currentTurn) {
 		makeMove(m->move().row, m->move().column);
 	}
+}
+
+void MainWindow::tinyGame()
+{
+	boardSize = 2;
+	resetGame();
 }
 
 void MainWindow::setCurrentPlayer(TokenColour player)

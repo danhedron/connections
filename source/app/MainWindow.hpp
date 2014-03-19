@@ -42,6 +42,8 @@ public slots:
 
 private slots:
 
+	void tinyGame();
+
 	void smallGame();
 
 	void normalGame();

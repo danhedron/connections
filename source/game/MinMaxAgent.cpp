@@ -114,7 +114,7 @@ float MinMaxAgent::value(const GameBoard &board, bool player, float al, float be
         tbuff = tally;
     }
 
-	if(d > board.getRunSize()) {
+	if(d > board.getRunSize()+3) {
         return eval(board);
     }
     if(board.isEndGame()) {
@@ -158,6 +158,7 @@ Move MinMaxAgent::calculateMove(const GameBoard& board)
 		}
 	}
 	std::cout << "Evaulated " << tally << " states" << std::endl;
+	std::cout << "Picked moves with score:  " << bestScore << std::endl;
 	std::uniform_int_distribution<int> unidist(0, topMoves.size()-1);
 	return topMoves.at(unidist(rengine));
 }
