@@ -140,6 +140,7 @@ void addIfValid(std::vector<Move>& p, const GameBoard* b, BoardIndex r, BoardInd
 std::vector<Move> GameBoard::getAdjacentPoints(BoardIndex r, BoardIndex c, TokenColour tc) const
 {
 	std::vector<Move> points;
+	points.reserve(8);
 	if(getRowColour(r) == T_RED) {
 		addIfValid(points, this, r-1, c - 1);
 		addIfValid(points, this, r-1, c    );

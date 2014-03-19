@@ -69,7 +69,7 @@ float MinMaxAgent::eval(const GameBoard &b)
             }
             open.pop_front();
         }
-    }
+	}
     return playerColour == T_RED ? redscore-whitescore : whitescore-redscore;
 }
 
