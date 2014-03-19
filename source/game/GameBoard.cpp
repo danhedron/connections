@@ -247,7 +247,7 @@ TokenColour GameBoard::getAcrossBoardWinner() const
 		while(!open.empty()) {
 			Move& t = open.front();
 			closed.push_back(t);
-			if(t.column == getRowSize(r)-1) {
+			if(getRowColour(t.row) == T_WHITE && t.column == getRowSize(t.row)-1) {
 				return T_WHITE;
 			}
 			auto adjacents = getAdjacentPoints(t.row, t.column);

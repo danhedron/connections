@@ -123,6 +123,42 @@ BOOST_AUTO_TEST_CASE(Board_Test_GameOver)
     BOOST_CHECK( br.isEndGame() );
 
     BOOST_CHECK( br.getWinner() == T_RED );
+
+	{
+		GameBoard board(3);
+
+		board.putToken(1, 0, T_WHITE);
+		board.putToken(1, 1, T_WHITE);
+		board.putToken(2, 2, T_WHITE);
+		//board.putToken(3, 1, T_WHITE);
+		//board.putToken(0, 2, T_RED);
+
+		board.printBoard();
+
+		WinType wt = WT_NOWIN;
+
+		BOOST_CHECK(! board.isEndGame(&wt) );
+
+		BOOST_CHECK_EQUAL( wt, WT_NOWIN );
+	}
+	{
+		GameBoard board(3);
+
+		board.putToken(1, 0, T_WHITE);
+		board.putToken(1, 1, T_WHITE);
+		board.putToken(1, 2, T_WHITE);
+		board.putToken(2, 2, T_WHITE);
+		//board.putToken(3, 1, T_WHITE);
+		//board.putToken(0, 2, T_RED);
+
+		board.printBoard();
+
+		WinType wt = WT_NOWIN;
+
+		BOOST_CHECK( board.isEndGame(&wt) );
+
+		BOOST_CHECK_EQUAL( wt, WT_CONNECTION );
+	}
 }
 
 BOOST_AUTO_TEST_CASE(Board_Test_EndGame_Boxin)
