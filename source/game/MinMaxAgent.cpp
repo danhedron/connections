@@ -112,14 +112,15 @@ float MinMaxAgent::value(const GameBoard &board, bool player, float al, float be
     if(tally - tbuff >= 10000) {
         std::cout << tally << " states" << std::endl;
         tbuff = tally;
-    }
+	}
 
-	if(d > board.getBoardLength()) {
-        return eval(board);
-    }
     if(board.isEndGame()) {
         return utility(board);
     }
+
+	if(d > board.getBoardLength()) {
+		return eval(board);
+	}
 
     if(player) {
 		for(Move& m : board.availableMoves(playerColour)) {
