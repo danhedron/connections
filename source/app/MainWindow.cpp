@@ -146,6 +146,8 @@ void MainWindow::resetGame()
 
 		queueAIMove(redPlayerAgent, T_RED);
 	}
+
+	setCurrentPlayer(T_RED);
 }
 
 void MainWindow::AIGame()
