@@ -99,6 +99,18 @@ std::vector<Move> GameBoard::availableMoves() const
 	return moves;
 }
 
+bool GameBoard::isValidMove(TokenColour colour, BoardIndex r, BoardIndex c) const
+{
+	if((r == 0 || r == getBoardLength()-1) && (c == 0 || c == getRowSize(r)-1)) return false;
+	if(colour == T_WHITE) {
+		if(r == 0 || r == getBoardLength()-1) return false;
+	}
+	if(colour == T_RED) {
+		if(getRowColour(r) == T_RED && (c == 0 || c == getRowSize(r)-1)) return false;
+	}
+	return true;
+}
+
 void GameBoard::reset()
 {
 	for(unsigned int r = 0; r < _rows.size(); ++r) {

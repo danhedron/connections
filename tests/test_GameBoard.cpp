@@ -43,6 +43,23 @@ BOOST_AUTO_TEST_CASE(Board_Test)
 	BOOST_CHECK_EQUAL( board.getOrientation(2, 3), O_HORIZONTAL);
 }
 
+BOOST_AUTO_TEST_CASE(Board_Test_ValidMoves)
+{
+	GameBoard board(5);
+
+	BOOST_CHECK( board.isValidMove(T_RED, 1,0) );
+	BOOST_CHECK( board.isValidMove(T_RED, 2,1) );
+
+	BOOST_CHECK(! board.isValidMove(T_RED, 0,0) );
+	BOOST_CHECK(! board.isValidMove(T_RED, 2,0) );
+
+	BOOST_CHECK( board.isValidMove(T_WHITE, 1,0) );
+	BOOST_CHECK( board.isValidMove(T_WHITE, 2,1) );
+
+	BOOST_CHECK(! board.isValidMove(T_WHITE, 0,0) );
+	BOOST_CHECK(! board.isValidMove(T_WHITE, 0,2) );
+}
+
 BOOST_AUTO_TEST_CASE(Board_Test_Size)
 {
 	GameBoard board(5);

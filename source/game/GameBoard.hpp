@@ -89,6 +89,8 @@ public:
 
 	std::vector<Move> availableMoves() const;
 
+	bool isValidMove(TokenColour colour, BoardIndex r, BoardIndex c) const;
+
     GameBoard apply(const Move& m, TokenColour c) const;
 
 	void reset();
