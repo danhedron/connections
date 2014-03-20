@@ -3,9 +3,9 @@
 #include <sstream>
 #include <MinMaxAgent.hpp>
 
-std::string GraphGen::boardNode(const GameBoard &b, const std::string& data, const std::string& colour)
+std::string GraphGen::boardNode(const GameBoard &b, const std::string& data, const std::string& colour, const std::string id)
 {
-	return b.encodeString() + " [label = \""+ b.toString("", false) +"\\n"+data+"\", shape=\"box\", color=\""+colour+"\"]";
+	return b.encodeString() + id + " [label = \""+ b.toString("", false) +"\\n"+data+"\", shape=\"box\", color=\""+colour+"\"]";
 }
 
 std::string GraphGen::graph(const GameBoard &b)
@@ -16,12 +16,13 @@ std::string GraphGen::graph(const GameBoard &b)
 	MinMaxAgent agent(T_WHITE);
 	agent.setStateEvaluatedCallback([&](const GameBoard& b, const GameBoard& p, float score, float alpha, float beta, size_t depth)
 	{
-		ss << p.encodeString() << " -> " << b.encodeString() << ";\n";
+		ss << p.encodeString() << (depth-1) << " -> " << b.encodeString() << depth << ";\n";
 		TokenColour tc = ((depth%2==0) ? T_WHITE : T_RED);
 		std::stringstream sbuff;
-		sbuff << score << " " << alpha << " " << beta;
-		ss << boardNode(b, sbuff.str(), (tc==T_RED) ? "red" : "white");
-		auto avmoves = b.availableMoves(tc);
+		std::stringstream snbg;
+		snbg << depth;
+		sbuff << (b.isEndGame() ? "T":"H") << " " << score << " " << alpha << " " << beta;
+		ss << boardNode(b, sbuff.str(), (tc==T_RED) ? "red" : "white", snbg.str());
 	});
 
 	agent.calculateMove(b);

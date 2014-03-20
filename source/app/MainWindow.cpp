@@ -192,6 +192,8 @@ void MainWindow::writeGraphviz()
 		QFile f(dialog.selectedFiles()[0]);
 		f.open(QIODevice::WriteOnly | QIODevice::Text);
 		QTextStream out(&f);
-		out << QString::fromStdString(GraphGen::graph(*gbw->gameBoard()));
+		GameBoard b(*gbw->gameBoard());
+		b.putToken(0, 1, T_RED);
+		out << QString::fromStdString(GraphGen::graph(b));
 	}
 }

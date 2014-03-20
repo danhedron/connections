@@ -117,9 +117,9 @@ float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool p
 	float statescore = -1.f;
 
 	if(board.isEndGame()) {
-		statescore = utility(board)/d;
+		statescore = utility(board);
 	}
-	else if(d > board.getRunSize()*2) {
+	else if(d > board.getRunSize()) {
 		statescore = eval(board);
 	}
 	else {
@@ -155,7 +155,7 @@ Move MinMaxAgent::calculateMove(const GameBoard& board)
 	for(auto& move : moves) {
 		auto v = value(board.apply(move, colour()), board, false,
 					   std::numeric_limits<float>::lowest(),
-					   std::numeric_limits<float>::max(), 1);
+					   std::numeric_limits<float>::max(), 0);
 		if(v > bestScore) {
 			bestScore = v;
 			topMoves.clear();

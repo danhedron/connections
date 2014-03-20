@@ -10,7 +10,7 @@ class GraphGen
 {
 public:
 
-	static std::string boardNode(const GameBoard&, const std::string& data = "", const std::string &colour = "red");
+	static std::string boardNode(const GameBoard&, const std::string& data = "", const std::string &colour = "red", const std::string id="");
 
 	static std::string graph(const GameBoard&);
 
