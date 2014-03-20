@@ -106,7 +106,7 @@ float MinMaxAgent::maxValue(const GameBoard& oldboard, const Move& move, unsigne
 }
 
 int tbuff= 0;
-float MinMaxAgent::value(const GameBoard &board, bool player, float alpha, float beta, unsigned int d)
+float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool player, float alpha, float beta, unsigned int d)
 {
 	tally ++;
 	if(tally - tbuff >= 10000) {
@@ -114,39 +114,46 @@ float MinMaxAgent::value(const GameBoard &board, bool player, float alpha, float
 		tbuff = tally;
 	}
 
+	float statescore = -1.f;
+
 	if(board.isEndGame()) {
-		return utility(board)/d;
+		statescore = utility(board)/d;
 	}
-
-	if(d > board.getRunSize()*2) {
-		return eval(board);
-	}
-
-	if(player) {
-		for(Move& m : board.availableMoves(colour())) {
-			alpha = std::max(alpha, value(board.apply(m, colour()), alpha, beta, !player, d+1));
-			if(beta <= alpha) break;
-		}
-		return alpha;
+	else if(d > board.getRunSize()*2) {
+		statescore = eval(board);
 	}
 	else {
-		for(Move& m : board.availableMoves(opponentColour())) {
-			beta = std::min(beta, value(board.apply(m, opponentColour()),
-										alpha, beta, !player, d+1));
-			if(beta <= alpha) break;
+		if(player) {
+			for(Move& m : board.availableMoves(colour())) {
+				alpha = std::max(alpha, value(board.apply(m, colour()), board, !player, alpha, beta, d+1));
+				if(beta <= alpha) break;
+			}
+			statescore = alpha;
 		}
-		return beta;
+		else {
+			for(Move& m : board.availableMoves(opponentColour())) {
+				beta = std::min(beta, value(board.apply(m, opponentColour()),
+											 board, !player, alpha, beta, d+1));
+				if(beta <= alpha) break;
+			}
+			statescore = beta;
+		}
 	}
+	if(stateEvaluatedCallback()) {
+		stateEvaluatedCallback()(board, parent, statescore, alpha, beta, d);
+	}
+	return statescore;
 }
 
 Move MinMaxAgent::calculateMove(const GameBoard& board)
 {
 	tally = 0;
+
 	auto moves = board.availableMoves(colour());
 	float bestScore = -std::numeric_limits<float>::max();
 	std::vector<Move> topMoves;
 	for(auto& move : moves) {
-		auto v = value(board.apply(move, colour()), false,
+		auto v = value(board.apply(move, colour()), board, false,
 					   std::numeric_limits<float>::lowest(),
 					   std::numeric_limits<float>::max(), 1);
 		if(v > bestScore) {

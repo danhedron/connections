@@ -3,14 +3,20 @@
 #define _MINMAXAGENT_HPP_
 #include "GameTypes.hpp"
 #include <random>
+#include <functional>
 
 class GameBoard;
+
+// Current State, Score, Alpha, Beta, Depth
+typedef std::function<void (const GameBoard&, const GameBoard&, float, float, float, size_t)> StateEvaluatedCallback;
 
 class Agent
 {
 private:
 
 	TokenColour playerColour;
+
+	StateEvaluatedCallback secb;
 
 public:
 
@@ -26,6 +32,12 @@ public:
 	virtual Move calculateMove(const GameBoard& board) = 0;
 
 	virtual ~Agent(){}
+
+	void setStateEvaluatedCallback(StateEvaluatedCallback cb)
+	{ secb = cb; }
+
+	const StateEvaluatedCallback& stateEvaluatedCallback() const
+	{ return secb; }
 };
 
 class MinMaxAgent : public Agent
@@ -43,7 +55,7 @@ class MinMaxAgent : public Agent
 
 	float maxValue(const GameBoard& board, const Move& move, unsigned int d);
 
-	float value(const GameBoard& board, bool player, float alpha, float beta, unsigned int d);
+	float value(const GameBoard& board, const GameBoard &parent, bool player, float alpha, float beta, unsigned int d);
 public:
 
 	MinMaxAgent(TokenColour player);
