@@ -102,6 +102,9 @@ public:
 	/** Prints board to stdout */
 	void printBoard(std::string prefix="") const;
 
+	std::string toString(const std::string& prefix = "", bool colour = true) const;
+	std::string encodeString() const;
+
 private:
 	TokenColour getAcrossBoardWinner() const;
 	TokenColour getBoxInWinner() const;

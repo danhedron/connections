@@ -57,6 +57,8 @@ private slots:
 	void AIGame();
 
 	void playerClick(BoardIndex row, BoardIndex column);
+
+	void writeGraphviz();
 };
 
 #endif 

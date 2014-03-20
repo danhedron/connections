@@ -1,12 +1,15 @@
 #include "MainWindow.hpp"
 #include "GameBoardWidget.hpp"
 #include <game/GameBoard.hpp>
+#include <game/GraphGen.hpp>
 #include <QMenuBar>
 #include <QStatusBar>
 #include <QMessageBox>
 #include <QApplication>
+#include <QFileDialog>
 #include "AIPlayerWorker.hpp"
 #include <MinMaxAgent.hpp>
+#include <QTextStream>
 
 void MainWindow::queueAIMove(Agent *agent, TokenColour tc)
 {
@@ -40,6 +43,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
 	QMenu* help = mb->addMenu("&Help");
 	help->addAction("&About Qt", QGuiApplication::instance(), SLOT(aboutQt()));
+	help->addAction("Write &Graph", this, SLOT(writeGraphviz()));
 
 	statusLabel = new QLabel();
 	statusBar()->addWidget(statusLabel);
@@ -176,5 +180,18 @@ void MainWindow::playerClick(BoardIndex row, BoardIndex column)
 		if(currentTurn == T_RED && !redai) {
 			makeMove(row, column);
 		}
+	}
+}
+
+void MainWindow::writeGraphviz()
+{
+	QFileDialog dialog(this);
+	dialog.setFileMode(QFileDialog::AnyFile);
+	dialog.setNameFilter(tr("Graphviz file (*.gv)"));
+	if(dialog.exec()) {
+		QFile f(dialog.selectedFiles()[0]);
+		f.open(QIODevice::WriteOnly | QIODevice::Text);
+		QTextStream out(&f);
+		out << QString::fromStdString(GraphGen::graph(*gbw->gameBoard()));
 	}
 }

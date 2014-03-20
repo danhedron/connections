@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cassert>
 #include <list>
+#include <sstream>
 
 BoardRow::BoardRow(TokenColour c, BoardIndex l)
 	: rowColour(c)
@@ -216,26 +217,52 @@ std::string toksym(TokenOrientation o) {
 
 void GameBoard::printBoard(std::string prefix) const
 {
+	std::cout << toString(prefix) << std::endl;
+}
+
+std::string GameBoard::toString(const std::string &prefix, bool colour) const
+{
+	std::stringstream ss;
 	for(size_t r = 0; r < getBoardLength(); ++r) {
 		auto rc = getRowColour(r);
-		std::cout << prefix;
-		std::cout << (rc == T_RED ? "" : "");
-		std::string rowesc = colesc(getRowColour(r));
-		if(rc == T_WHITE) std::cout << "· ";
+		ss << prefix;
+		ss << (rc == T_RED ? "" : "");
+		std::string rowesc = colour ? colesc(getRowColour(r)) : "";
+		if(rc == T_WHITE) ss << "· ";
 		for(size_t c = 0; c < getRowSize(r); ++c) {
 			if(getColour(r, c) != T_EMPTY) {
-				std::cout << colesc(getColour(r, c));
-				std::cout << toksym(getOrientation(r, c));
+				if(colour) ss << colesc(getColour(r, c));
+				ss << toksym(getOrientation(r, c));
 			}
 			else {
-				std::cout << " ";
+				ss << " ";
 			}
 			if(rc == T_WHITE || c < getRowSize(r)-1) {
-				std::cout << rowesc << " · ";
+				ss << rowesc << " · ";
 			}
 		}
-		std::cout << rowesc << "\033[39m" << std::endl;
+		ss << rowesc << (colour ? "\033[39m" : "") << (colour ? "\n" : "\\n");
 	}
+	return ss.str();
+}
+
+std::string GameBoard::encodeString() const
+{
+	std::stringstream ss;
+	for(size_t r = 0; r < getBoardLength(); ++r) {
+		for(size_t c = 0; c < getRowSize(r); ++c) {
+			if(getColour(r, c) == T_WHITE) {
+				ss << "W";
+			}
+			else if(getColour(r,c) == T_RED) {
+				ss << "R";
+			}
+			else {
+				ss << "_";
+			}
+		}
+	}
+	return ss.str();
 }
 
 TokenColour GameBoard::getAcrossBoardWinner() const
