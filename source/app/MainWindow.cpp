@@ -183,6 +183,9 @@ void MainWindow::playerClick(BoardIndex row, BoardIndex column)
 	}
 }
 
+#include <iostream>
+#include <QPainter>
+
 void MainWindow::writeGraphviz()
 {
 	QFileDialog dialog(this);
@@ -194,6 +197,22 @@ void MainWindow::writeGraphviz()
 		QTextStream out(&f);
 		GameBoard b(*gbw->gameBoard());
 		b.putToken(0, 1, T_RED);
+		QString fdir = QFileInfo(dialog.selectedFiles()[0]).dir().path();
+
+		GraphGen::setPrepareImageCallback([&](const GameBoard& b, const std::string& fname) {
+			QFile imfile(fdir + "/" + QString::fromStdString(fname) + ".png");
+			if(!imfile.exists()) {
+				QImage image(100, 100, QImage::Format_RGB888);
+				QPainter imp(&image);
+
+				GameBoardWidget::paintBoard(&b, imp);
+
+				image.save(imfile.fileName());
+
+				std::cout << "Wrote image " << imfile.fileName().toStdString() << std::endl;
+			}
+		});
+
 		out << QString::fromStdString(GraphGen::graph(b));
 	}
 }

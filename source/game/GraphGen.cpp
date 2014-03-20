@@ -3,15 +3,19 @@
 #include <sstream>
 #include <MinMaxAgent.hpp>
 
+PrepareImageCallback GraphGen::pic;
+
 std::string GraphGen::boardNode(const GameBoard &b, const std::string& data, const std::string& colour, const std::string id)
 {
-	return b.encodeString() + id + " [label = \""+ b.toString("", false) +"\\n"+data+"\", shape=\"box\", color=\""+colour+"\"]";
+	if(pic) pic(b, b.encodeString());
+	return b.encodeString() + id + " [image = \""+ b.encodeString() +".png\", label=\""+data+"\", labelloc=\"b\", shape=\"box\", color=\""+colour+"\"]";
 }
 
 std::string GraphGen::graph(const GameBoard &b)
 {
 	std::stringstream ss;
-	ss << "digraph {";
+	ss << "digraph {\n";
+	ss << "imagepath = \"~/Projects/connections-build/graphs/\";\n";
 
 	MinMaxAgent agent(T_WHITE);
 	agent.setStateEvaluatedCallback([&](const GameBoard& b, const GameBoard& p, float score, float alpha, float beta, size_t depth)
@@ -22,7 +26,7 @@ std::string GraphGen::graph(const GameBoard &b)
 		std::stringstream snbg;
 		snbg << depth;
 		sbuff << (b.isEndGame() ? "T":"H") << " " << score << " " << alpha << " " << beta;
-		ss << boardNode(b, sbuff.str(), (tc==T_RED) ? "red" : "white", snbg.str());
+		ss << boardNode(b, sbuff.str(), (tc==T_RED) ? "red" : "white", snbg.str()) << "\n";
 	});
 
 	agent.calculateMove(b);

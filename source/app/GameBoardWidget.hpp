@@ -11,9 +11,9 @@ class GameBoardWidget : public QWidget
 
 	GameBoard* board;
 
-	QPointF calculateTilePosition(BoardIndex row, BoardIndex col) const;
+	static QPointF calculateTilePosition(const GameBoard *board, BoardIndex row, BoardIndex col);
 
-	QTransform calculateBoardTransform() const;
+	static QTransform calculateBoardTransform(const GameBoard *board, QPaintDevice *d);
 public:
 	
 	GameBoard* gameBoard() const;
@@ -23,6 +23,8 @@ public:
 	virtual void paintEvent(QPaintEvent*);
 
 	virtual void mousePressEvent(QMouseEvent*);
+
+	static void paintBoard(const GameBoard *board, QPainter& p);
 
 signals:
 
