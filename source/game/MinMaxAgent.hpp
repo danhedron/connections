@@ -8,7 +8,7 @@ class GameBoard;
 
 class Agent
 {
-protected:
+private:
 
 	TokenColour playerColour;
 
@@ -19,6 +19,9 @@ public:
 
 	TokenColour colour() const
 	{ return playerColour; }
+
+	TokenColour opponentColour() const
+	{ return colour() == T_RED ? T_WHITE : T_RED; }
 
 	virtual Move calculateMove(const GameBoard& board) = 0;
 

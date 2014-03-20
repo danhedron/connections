@@ -15,7 +15,7 @@ MinMaxAgent::MinMaxAgent(TokenColour player)
 float MinMaxAgent::utility(const GameBoard& board)
 {
 	auto w = board.getWinner();
-	if(w == playerColour) {
+	if(w == colour()) {
 		return 100.f;
 	}
 	else if(w == T_EMPTY) {
@@ -70,18 +70,18 @@ float MinMaxAgent::eval(const GameBoard &b)
 			open.pop_front();
 		}
 	}
-	return playerColour == T_RED ? redscore: whitescore;
+	return colour() == T_RED ? redscore: whitescore;
 }
 
 float MinMaxAgent::minValue(const GameBoard& oldboard, const Move& move, unsigned int d)
 {
 	tally ++;
 	GameBoard board(oldboard);
-	board.putToken(move.row, move.column, (playerColour == T_RED)? T_WHITE : T_RED);
+	board.putToken(move.row, move.column, colour());
 	if(board.isEndGame()) {
 		return utility(board);
 	}
-	auto moves = board.availableMoves((playerColour == T_RED)? T_WHITE : T_RED);
+	auto moves = board.availableMoves(opponentColour());
 	float score = std::numeric_limits<float>::max();
 	for(auto& m : moves) {
 		score = std::min(score, maxValue(board, m, d+1));
@@ -93,11 +93,11 @@ float MinMaxAgent::maxValue(const GameBoard& oldboard, const Move& move, unsigne
 {
 	tally ++;
 	GameBoard board(oldboard);
-	board.putToken(move.row, move.column, playerColour);
+	board.putToken(move.row, move.column, opponentColour());
 	if(board.isEndGame()) {
 		return utility(board);
 	}
-	auto moves = board.availableMoves(playerColour);
+	auto moves = board.availableMoves(colour());
 	float score = -std::numeric_limits<float>::max();
 	for(auto& m : moves) {
 		score = std::max(score, minValue(board, m, d+1));
@@ -123,15 +123,15 @@ float MinMaxAgent::value(const GameBoard &board, bool player, float alpha, float
 	}
 
 	if(player) {
-		for(Move& m : board.availableMoves(playerColour)) {
-			alpha = std::max(alpha, value(board.apply(m, playerColour), alpha, beta, !player, d+1));
+		for(Move& m : board.availableMoves(colour())) {
+			alpha = std::max(alpha, value(board.apply(m, colour()), alpha, beta, !player, d+1));
 			if(beta <= alpha) break;
 		}
 		return alpha;
 	}
 	else {
-		for(Move& m : board.availableMoves((playerColour==T_RED)? T_WHITE:T_RED)) {
-			beta = std::min(beta, value(board.apply(m, (playerColour==T_RED)? T_WHITE:T_RED),
+		for(Move& m : board.availableMoves(opponentColour())) {
+			beta = std::min(beta, value(board.apply(m, opponentColour()),
 										alpha, beta, !player, d+1));
 			if(beta <= alpha) break;
 		}
@@ -142,11 +142,11 @@ float MinMaxAgent::value(const GameBoard &board, bool player, float alpha, float
 Move MinMaxAgent::calculateMove(const GameBoard& board)
 {
 	tally = 0;
-	auto moves = board.availableMoves(playerColour);
+	auto moves = board.availableMoves(colour());
 	float bestScore = -std::numeric_limits<float>::max();
 	std::vector<Move> topMoves;
 	for(auto& move : moves) {
-		auto v = value(board.apply(move, playerColour), false,
+		auto v = value(board.apply(move, colour()), false,
 					   std::numeric_limits<float>::lowest(),
 					   std::numeric_limits<float>::max(), 1);
 		if(v > bestScore) {

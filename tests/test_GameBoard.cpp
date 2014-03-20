@@ -112,17 +112,17 @@ BOOST_AUTO_TEST_CASE(Board_Test_GameOver)
 
 	BOOST_CHECK( board.getWinner() == T_RED );
 
-    GameBoard bn(1);
+	GameBoard bn(1);
 
-    BOOST_CHECK(! bn.isEndGame() );
+	BOOST_CHECK(! bn.isEndGame() );
 
-    GameBoard br(1);
+	GameBoard br(1);
 
-    br.putToken(1,0, T_RED);
+	br.putToken(1,0, T_RED);
 
-    BOOST_CHECK( br.isEndGame() );
+	BOOST_CHECK( br.isEndGame() );
 
-    BOOST_CHECK( br.getWinner() == T_RED );
+	BOOST_CHECK( br.getWinner() == T_RED );
 
 	{
 		GameBoard board(3);
