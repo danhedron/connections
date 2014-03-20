@@ -6,17 +6,17 @@
 
 class MoveResult : public QObject
 {
-    Move m;
+	Move m;
 	TokenColour p;
 
 public:
 
 	MoveResult(const Move& m, TokenColour c, QObject* parent)
 		: QObject(parent), m(m), p(c)
-    {}
+	{}
 
-    const Move& move() const
-    { return m; }
+	const Move& move() const
+	{ return m; }
 
 	TokenColour player() const
 	{ return p; }
@@ -24,23 +24,23 @@ public:
 
 class AIPlayerWorker : public QObject
 {
-    Q_OBJECT
-    QThread workerThread;
-    Agent* agent;
-    GameBoard* gameBoard;
+	Q_OBJECT
+	QThread workerThread;
+	Agent* agent;
+	GameBoard* gameBoard;
 public:
 
-    AIPlayerWorker(Agent* agent);
+	AIPlayerWorker(Agent* agent);
 
-    void startMove(GameBoard *gbw);
+	void startMove(GameBoard *gbw);
 
 public slots:
 
-    void decideNextMove();
+	void decideNextMove();
 
 signals:
 
-    void moveDecided(MoveResult*);
+	void moveDecided(MoveResult*);
 };
 
 #endif // AIPLAYERWORKER_H

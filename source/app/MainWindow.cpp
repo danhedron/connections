@@ -17,8 +17,8 @@ void MainWindow::queueAIMove(Agent *agent, TokenColour tc)
 }
 
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
-: QMainWindow(parent, flags), gbw(nullptr), boardSize(5), redai(false),
-  redPlayerAgent(nullptr), whitePlayerAgent(nullptr)
+	: QMainWindow(parent, flags), gbw(nullptr), boardSize(5), redai(false),
+	  redPlayerAgent(nullptr), whitePlayerAgent(nullptr)
 {
 	setMinimumSize(300, 300);
 

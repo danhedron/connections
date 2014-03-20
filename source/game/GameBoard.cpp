@@ -178,9 +178,9 @@ std::vector<Move> GameBoard::getAdjacentPoints(BoardIndex r, BoardIndex c, Token
 
 GameBoard GameBoard::apply(const Move &m, TokenColour c) const
 {
-    GameBoard gb(*this);
-    gb.putToken(m.row, m.column, c);
-    return gb;
+	GameBoard gb(*this);
+	gb.putToken(m.row, m.column, c);
+	return gb;
 }
 
 bool GameBoard::isEndGame(WinType *wt) const
@@ -207,33 +207,33 @@ TokenColour GameBoard::getWinner(WinType *wt) const
 }
 
 std::string colesc(TokenColour t) {
-    return t == T_RED ? "\033[91m": "\033[39m";
+	return t == T_RED ? "\033[91m": "\033[39m";
 }
 
 std::string toksym(TokenOrientation o) {
-    return o == O_VERTICAL ? "|" : "─";
+	return o == O_VERTICAL ? "|" : "─";
 }
 
 void GameBoard::printBoard(std::string prefix) const
 {
-    for(size_t r = 0; r < getBoardLength(); ++r) {
+	for(size_t r = 0; r < getBoardLength(); ++r) {
 		auto rc = getRowColour(r);
-        std::cout << prefix;
+		std::cout << prefix;
 		std::cout << (rc == T_RED ? "" : "");
-        std::string rowesc = colesc(getRowColour(r));
+		std::string rowesc = colesc(getRowColour(r));
 		if(rc == T_WHITE) std::cout << "· ";
-        for(size_t c = 0; c < getRowSize(r); ++c) {
-            if(getColour(r, c) != T_EMPTY) {
-                std::cout << colesc(getColour(r, c));
-                std::cout << toksym(getOrientation(r, c));
-            }
-            else {
-                std::cout << " ";
-            }
+		for(size_t c = 0; c < getRowSize(r); ++c) {
+			if(getColour(r, c) != T_EMPTY) {
+				std::cout << colesc(getColour(r, c));
+				std::cout << toksym(getOrientation(r, c));
+			}
+			else {
+				std::cout << " ";
+			}
 			if(rc == T_WHITE || c < getRowSize(r)-1) {
 				std::cout << rowesc << " · ";
 			}
-        }
+		}
 		std::cout << rowesc << "\033[39m" << std::endl;
 	}
 }

@@ -8,9 +8,9 @@
 /**
  * Rough notes on grid layout
  *
- * Token states := 
+ * Token states :=
  *   Horizontal (Connecting within row)
- *   Vertical (Connecting adjacent rows) 
+ *   Vertical (Connecting adjacent rows)
  * Token Orientation :=
  *   Row Colour => Horizontal
  *   !Row Colour => Vertical
@@ -32,7 +32,7 @@
  *   N, N + 1
  *  Terminal Row Length
  *   N - 1
- *  
+ *
  */
 
 class BoardRow
@@ -91,7 +91,7 @@ public:
 
 	bool isValidMove(TokenColour colour, BoardIndex r, BoardIndex c) const;
 
-    GameBoard apply(const Move& m, TokenColour c) const;
+	GameBoard apply(const Move& m, TokenColour c) const;
 
 	void reset();
 
@@ -99,8 +99,8 @@ public:
 
 	TokenColour getWinner(WinType *wt = nullptr) const;
 
-    /** Prints board to stdout */
-    void printBoard(std::string prefix="") const;
+	/** Prints board to stdout */
+	void printBoard(std::string prefix="") const;
 
 private:
 	TokenColour getAcrossBoardWinner() const;

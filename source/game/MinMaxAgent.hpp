@@ -32,15 +32,15 @@ class MinMaxAgent : public Agent
 	std::random_device rdevice;
 	std::default_random_engine rengine;
 
-    float utility(const GameBoard& board);
+	float utility(const GameBoard& board);
 
-    float eval(const GameBoard& board);
+	float eval(const GameBoard& board);
 
-    float minValue(const GameBoard& board, const Move& move, unsigned int d);
+	float minValue(const GameBoard& board, const Move& move, unsigned int d);
 
-    float maxValue(const GameBoard& board, const Move& move, unsigned int d);
+	float maxValue(const GameBoard& board, const Move& move, unsigned int d);
 
-    float value(const GameBoard& board, bool player, float al, float bet, unsigned int d);
+	float value(const GameBoard& board, bool player, float alpha, float beta, unsigned int d);
 public:
 
 	MinMaxAgent(TokenColour player);
