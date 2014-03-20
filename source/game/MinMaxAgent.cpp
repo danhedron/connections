@@ -116,11 +116,15 @@ float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool p
 
 	float statescore = -1.f;
 
+	char scoremode = ' ';
+
 	if(board.isEndGame()) {
 		statescore = utility(board);
+		scoremode = 'T';
 	}
 	else if(d > board.getRunSize()) {
 		statescore = eval(board);
+		scoremode = 'E';
 	}
 	else {
 		if(player) {
@@ -129,6 +133,7 @@ float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool p
 				if(beta <= alpha) break;
 			}
 			statescore = alpha;
+			scoremode = 'A';
 		}
 		else {
 			for(Move& m : board.availableMoves(opponentColour())) {
@@ -137,10 +142,11 @@ float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool p
 				if(beta <= alpha) break;
 			}
 			statescore = beta;
+			scoremode = 'B';
 		}
 	}
 	if(stateEvaluatedCallback()) {
-		stateEvaluatedCallback()(board, parent, statescore, alpha, beta, d);
+		stateEvaluatedCallback()(board, parent, statescore, alpha, beta, d, scoremode);
 	}
 	return statescore;
 }

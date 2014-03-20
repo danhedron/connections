@@ -8,7 +8,7 @@ PrepareImageCallback GraphGen::pic;
 std::string GraphGen::boardNode(const GameBoard &b, const std::string& data, const std::string& colour, const std::string id)
 {
 	if(pic) pic(b, b.encodeString());
-	return b.encodeString() + id + " [image = \""+ b.encodeString() +".png\", label=\""+data+"\", labelloc=\"b\", shape=\"box\", color=\""+colour+"\"]";
+	return b.encodeString() + " [image = \""+ b.encodeString() +".png\", label=\""+data+"\", labelloc=\"b\", shape=\"box\", color=\""+colour+"\"]";
 }
 
 std::string GraphGen::graph(const GameBoard &b)
@@ -18,14 +18,14 @@ std::string GraphGen::graph(const GameBoard &b)
 	ss << "imagepath = \"~/Projects/connections-build/graphs/\";\n";
 
 	MinMaxAgent agent(T_WHITE);
-	agent.setStateEvaluatedCallback([&](const GameBoard& b, const GameBoard& p, float score, float alpha, float beta, size_t depth)
+	agent.setStateEvaluatedCallback([&](const GameBoard& b, const GameBoard& p, float score, float alpha, float beta, size_t depth, char s)
 	{
-		ss << p.encodeString() << (depth-1) << " -> " << b.encodeString() << depth << ";\n";
+		ss << p.encodeString() << " -> " << b.encodeString() << ";\n";
 		TokenColour tc = ((depth%2==0) ? T_WHITE : T_RED);
 		std::stringstream sbuff;
 		std::stringstream snbg;
 		snbg << depth;
-		sbuff << (b.isEndGame() ? "T":"H") << " " << score << " " << alpha << " " << beta;
+		sbuff << s << "\\n" << score << "\\n" << alpha << "\\n" << beta;
 		ss << boardNode(b, sbuff.str(), (tc==T_RED) ? "red" : "white", snbg.str()) << "\n";
 	});
 

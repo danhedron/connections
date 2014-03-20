@@ -8,7 +8,7 @@
 class GameBoard;
 
 // Current State, Score, Alpha, Beta, Depth
-typedef std::function<void (const GameBoard&, const GameBoard&, float, float, float, size_t)> StateEvaluatedCallback;
+typedef std::function<void (const GameBoard&, const GameBoard&, float, float, float, size_t, char)> StateEvaluatedCallback;
 
 class Agent
 {
