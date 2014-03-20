@@ -70,7 +70,7 @@ float MinMaxAgent::eval(const GameBoard &b)
             open.pop_front();
         }
 	}
-    return playerColour == T_RED ? redscore-whitescore : whitescore-redscore;
+	return playerColour == T_RED ? redscore: whitescore;
 }
 
 float MinMaxAgent::minValue(const GameBoard& oldboard, const Move& move, unsigned int d)
@@ -111,21 +111,21 @@ float MinMaxAgent::value(const GameBoard &board, bool player, float al, float be
     tally ++;
     if(tally - tbuff >= 10000) {
         std::cout << tally << " states" << std::endl;
-        tbuff = tally;
+		tbuff = tally;
 	}
 
-    if(board.isEndGame()) {
-        return utility(board);
+	if(board.isEndGame()) {
+		return utility(board)/d;
     }
 
-	if(d > board.getBoardLength()) {
+	if(d > board.getRunSize()*2) {
 		return eval(board);
 	}
 
     if(player) {
 		for(Move& m : board.availableMoves(playerColour)) {
             al = std::max(al, value(board.apply(m, playerColour), al, bet, !player, d+1));
-            if(al >= bet) return bet;
+			if(bet <= al) break;
         }
         return al;
     }
@@ -133,7 +133,7 @@ float MinMaxAgent::value(const GameBoard &board, bool player, float al, float be
 		for(Move& m : board.availableMoves((playerColour==T_RED)? T_WHITE:T_RED)) {
             bet = std::min(bet, value(board.apply(m, (playerColour==T_RED)? T_WHITE:T_RED),
                                          al, bet, !player, d+1));
-            if(bet <= al) return al;
+			if(bet <= al) break;
         }
 		return bet;
     }
