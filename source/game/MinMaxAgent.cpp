@@ -122,7 +122,7 @@ float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool p
 		statescore = utility(board);
 		scoremode = 'T';
 	}
-	else if(d > board.getRunSize()) {
+	else if(d > board.getRunSize()/2) {
 		statescore = eval(board);
 		scoremode = 'E';
 	}

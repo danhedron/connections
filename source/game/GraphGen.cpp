@@ -16,6 +16,7 @@ std::string GraphGen::graph(const GameBoard &b)
 	std::stringstream ss;
 	ss << "digraph {\n";
 	ss << "imagepath = \"~/Projects/connections-build/graphs/\";\n";
+	ss << "ranksep = 2.0\n";
 
 	MinMaxAgent agent(T_WHITE);
 	agent.setStateEvaluatedCallback([&](const GameBoard& b, const GameBoard& p, float score, float alpha, float beta, size_t depth, char s)
