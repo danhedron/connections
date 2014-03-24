@@ -41,6 +41,20 @@ GameBoard::GameBoard(BoardIndex length)
 	}
 }
 
+GameBoard::GameBoard(BoardIndex length, const std::string &data)
+	: GameBoard(length)
+{
+	size_t i = 0;
+	for(size_t r = 0; r < getBoardLength(); ++r) {
+		for(size_t c = 0; c < getRowSize(r); ++c) {
+			char t = data.at(i++);
+			if(t != '_') {
+				putToken(r, c, t == 'R' ? T_RED : T_WHITE);
+			}
+		}
+	}
+}
+
 void GameBoard::putToken(BoardIndex row, BoardIndex i, TokenColour t)
 {
 	assert(row < _rows.size());

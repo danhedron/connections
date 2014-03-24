@@ -64,6 +64,7 @@ class GameBoard
 	BoardIndex _length;
 public:
 	GameBoard(BoardIndex length);
+	GameBoard(BoardIndex length, const std::string& data);
 
 	void putToken(BoardIndex row, BoardIndex i, TokenColour t);
 
