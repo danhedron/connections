@@ -157,10 +157,10 @@ void MainWindow::resetGame()
 	if(redPlayerAgent) {
 		delete redPlayerAgent;
 	}
-	whitePlayerAgent = new MinMaxAgent(T_WHITE);
+	whitePlayerAgent = new MinMaxAgent(T_WHITE, gb->getRunSize());
 
 	if(redai) {
-		redPlayerAgent = new MinMaxAgent(T_RED);
+		redPlayerAgent = new MinMaxAgent(T_RED, gb->getRunSize());
 
 		queueAIMove(redPlayerAgent, T_RED);
 	}
@@ -213,6 +213,6 @@ void MainWindow::writeGraphviz()
 			}
 		});
 
-		out << QString::fromStdString(GraphGen::graph(b));
+		out << QString::fromStdString(GraphGen::graph(b, 2));
 	}
 }

@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(GenChildren)
 	board.putToken(2, 2, T_RED);
 	board.putToken(2, 3, T_WHITE);
 
-	BOOST_CHECK_EQUAL(GraphGen::graph(board),
+	BOOST_CHECK_EQUAL(GraphGen::graph(board, 2),
 					  "graph{"
 					  "_RRR__R__R__RRW______________________________________________"
 					  "}");

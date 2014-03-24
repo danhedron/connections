@@ -6,8 +6,8 @@
 #include <list>
 #include <algorithm>
 
-MinMaxAgent::MinMaxAgent(TokenColour player)
-	: Agent(player), tally(0), rengine(rdevice())
+MinMaxAgent::MinMaxAgent(TokenColour player, unsigned int maxDepth)
+	: Agent(player), tally(0), maxDepth(maxDepth), rengine(rdevice())
 {
 
 }
@@ -128,7 +128,7 @@ float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool p
 		statescore = utility(board);
 		scoremode = 'T';
 	}
-	else if(d > board.getRunSize()) {
+	else if(d > maxDepth) {
 		statescore = eval(board);
 		scoremode = 'E';
 	}

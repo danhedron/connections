@@ -45,6 +45,7 @@ public:
 class MinMaxAgent : public Agent
 {
 	unsigned int tally;
+	unsigned int maxDepth;
 
 	std::random_device rdevice;
 	std::default_random_engine rengine;
@@ -63,7 +64,7 @@ class MinMaxAgent : public Agent
 
 public:
 
-	MinMaxAgent(TokenColour player);
+	MinMaxAgent(TokenColour player, unsigned int maxDepth);
 
 	Move calculateMove(const GameBoard& board);
 };

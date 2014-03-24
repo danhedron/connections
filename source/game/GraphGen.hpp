@@ -16,7 +16,7 @@ public:
 
 	static std::string boardNode(const GameBoard&, const std::string& data = "", const std::string &colour = "red", const std::string id="");
 
-	static std::string graph(const GameBoard&);
+	static std::string graph(const GameBoard&, unsigned int);
 
 	static std::string graphTree(const GameBoard& b, TokenColour first);
 

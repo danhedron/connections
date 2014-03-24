@@ -39,6 +39,12 @@ int main(int argc, char** argv)
 {
 	QApplication app(argc, argv);
 
+	unsigned int depth = 2;
+	int deparg = hasarg(argv, argc, "-graph-depth", true);
+	if(deparg != -1) {
+		depth = atoi(argv[deparg+1]);
+	}
+
 	int arc = hasarg(argv, argc, "-graph-from", true);
 	if(arc != -1) {
 		std::string seq = argv[arc+1];
@@ -68,7 +74,7 @@ int main(int argc, char** argv)
 			}
 		});
 
-		out << QString::fromStdString(GraphGen::graph(b));
+		out << QString::fromStdString(GraphGen::graph(b, depth));
 	}
 	else {
 		MainWindow mw;

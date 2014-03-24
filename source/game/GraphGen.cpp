@@ -13,14 +13,14 @@ std::string GraphGen::boardNode(const GameBoard &b, const std::string& data, con
 	return b.encodeString() + " [image = \""+ b.encodeString() +".png\", "+baseatrib+", label=\""+data+"\", labelloc=\"b\", shape=\"box\", color=\""+colour+"\"]";
 }
 
-std::string GraphGen::graph(const GameBoard &b)
+std::string GraphGen::graph(const GameBoard &b, unsigned int depth)
 {
 	std::stringstream ss;
 	ss << "digraph {\n";
 	ss << "imagepath = \"~/Projects/connections-build/graphs/\";\n";
 	ss << "ranksep = 2.0\n";
 
-	MinMaxAgent agent(T_WHITE);
+	MinMaxAgent agent(T_WHITE, depth);
 	agent.setStateEvaluatedCallback([&](const GameBoard& b, const GameBoard& p, float score, float alpha, float beta, size_t depth, char s)
 	{
 		ss << p.encodeString() << " -> " << b.encodeString() << ";\n";
