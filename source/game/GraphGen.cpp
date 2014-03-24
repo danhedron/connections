@@ -8,7 +8,7 @@ PrepareImageCallback GraphGen::pic;
 std::string GraphGen::boardNode(const GameBoard &b, const std::string& data, const std::string& colour, const std::string id)
 {
 	if(pic) pic(b, b.encodeString());
-	return b.encodeString() + " [image = \""+ b.encodeString() +".png\", label=\""+data+"\", labelloc=\"b\", shape=\"box\", color=\""+colour+"\"]";
+	return b.encodeString() + " [image = \""+ b.encodeString() +".png\", fontcolor=\"green\", label=\""+data+"\", labelloc=\"b\", shape=\"box\", color=\""+colour+"\"]";
 }
 
 std::string GraphGen::graph(const GameBoard &b)

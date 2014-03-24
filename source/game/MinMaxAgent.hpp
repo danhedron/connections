@@ -2,8 +2,10 @@
 #ifndef _MINMAXAGENT_HPP_
 #define _MINMAXAGENT_HPP_
 #include "GameTypes.hpp"
+
 #include <random>
 #include <functional>
+#include <map>
 
 class GameBoard;
 
@@ -56,6 +58,9 @@ class MinMaxAgent : public Agent
 	float maxValue(const GameBoard& board, const Move& move, unsigned int d);
 
 	float value(const GameBoard& board, const GameBoard &parent, bool player, float alpha, float beta, unsigned int d);
+
+	std::map<std::string, float> _scorecache;
+
 public:
 
 	MinMaxAgent(TokenColour player);

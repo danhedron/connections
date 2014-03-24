@@ -118,11 +118,17 @@ float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool p
 
 	char scoremode = ' ';
 
-	if(board.isEndGame()) {
+	auto it = _scorecache.find(board.encodeString());
+
+	if(it != _scorecache.end()) {
+		scoremode = 'C';
+		statescore = it->second;
+	}
+	else if(board.isEndGame()) {
 		statescore = utility(board);
 		scoremode = 'T';
 	}
-	else if(d > board.getRunSize()/2) {
+	else if(d > board.getRunSize()-1) {
 		statescore = eval(board);
 		scoremode = 'E';
 	}
@@ -145,8 +151,11 @@ float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool p
 			scoremode = 'B';
 		}
 	}
-	if(stateEvaluatedCallback()) {
-		stateEvaluatedCallback()(board, parent, statescore, alpha, beta, d, scoremode);
+	if(scoremode != 'C') {
+		_scorecache.insert({board.encodeString(), statescore});
+		if(stateEvaluatedCallback()) {
+			stateEvaluatedCallback()(board, parent, statescore, alpha, beta, d, scoremode);
+		}
 	}
 	return statescore;
 }
@@ -154,6 +163,8 @@ float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool p
 Move MinMaxAgent::calculateMove(const GameBoard& board)
 {
 	tally = 0;
+
+	_scorecache.clear();
 
 	auto moves = board.availableMoves(colour());
 	float bestScore = -std::numeric_limits<float>::max();

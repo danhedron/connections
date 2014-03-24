@@ -196,7 +196,7 @@ void MainWindow::writeGraphviz()
 		f.open(QIODevice::WriteOnly | QIODevice::Text);
 		QTextStream out(&f);
 		GameBoard b(*gbw->gameBoard());
-		b.putToken(0, 1, T_RED);
+
 		QString fdir = QFileInfo(dialog.selectedFiles()[0]).dir().path();
 
 		GraphGen::setPrepareImageCallback([&](const GameBoard& b, const std::string& fname) {
