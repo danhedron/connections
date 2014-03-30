@@ -383,4 +383,17 @@ BOOST_AUTO_TEST_CASE(Board_Test_Path)
 	}
 }
 
+BOOST_AUTO_TEST_CASE(Board_Symmetry_test)
+{
+	{
+		GameBoard b1(5);
+		GameBoard b2(5);
+
+		b1.putToken(1, 0, T_RED);
+		b2.putToken(1, 4, T_RED);
+
+		BOOST_CHECK_EQUAL(b1.encodeString(), b2.encodeString());
+	}
+}
+
 BOOST_AUTO_TEST_SUITE_END()
