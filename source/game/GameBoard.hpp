@@ -103,7 +103,18 @@ public:
 	/** Prints board to stdout */
 	void printBoard(std::string prefix="") const;
 
+	bool operator< (const GameBoard& r) const;
+
+	/**
+	 * Returns all symmetries of the current board (not including the current)
+	*/
+	std::vector<GameBoard> getSymmetries() const;
+
 	std::string toString(const std::string& prefix = "", bool colour = true) const;
+
+	typedef std::string Hash;
+	Hash encodeHash(bool normalize = false);
+
 	std::string encodeString() const;
 
 private:

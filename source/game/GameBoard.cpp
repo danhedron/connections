@@ -221,17 +221,82 @@ TokenColour GameBoard::getWinner(WinType *wt) const
 	return T_EMPTY;
 }
 
-std::string colesc(TokenColour t) {
+std::string colesc(TokenColour t)
+{
 	return t == T_RED ? "\033[91m": "\033[39m";
 }
 
-std::string toksym(TokenOrientation o) {
+std::string toksym(TokenOrientation o)
+{
 	return o == O_VERTICAL ? "|" : "─";
 }
 
 void GameBoard::printBoard(std::string prefix) const
 {
 	std::cout << toString(prefix) << std::endl;
+}
+
+bool GameBoard::operator<(const GameBoard &rhs) const
+{
+	for(int r = getBoardLength()-1; r >= 0; --r) {
+		for(int c = getRowSize(r) - 1; c >= 0; --c) {
+			auto tL = getColour(r, c);
+			auto tR = rhs.getColour(r, c);
+			if(tL == T_EMPTY && tR == T_EMPTY) continue;
+			return tL < tR;
+		}
+	}
+	return false;
+}
+
+std::vector<GameBoard> GameBoard::getSymmetries() const
+{
+	std::vector<GameBoard> syms;
+	syms.reserve(5);
+
+	// Swap H
+	{
+		GameBoard b(getRunSize());
+		for(size_t r = 0; r < getBoardLength(); ++r) {
+			for(size_t c = 0; c < getRowSize(r); ++c) {
+				auto T = getColour(r, c);
+				if(T != T_EMPTY) {
+					b.putToken(r, getRowSize(r) - 1 - c, T);
+				}
+			}
+		}
+		syms.push_back(b);
+	}
+	// Swap V
+	{
+		GameBoard b(getRunSize());
+		for(size_t r = 0; r < getBoardLength(); ++r) {
+			for(size_t c = 0; c < getRowSize(r); ++c) {
+				auto T = getColour(r, c);
+				if(T != T_EMPTY) {
+					b.putToken(getBoardLength() - 1 - r, c, T);
+				}
+			}
+		}
+		syms.push_back(b);
+	}
+
+	// Swap VH
+	{
+		GameBoard b(getRunSize());
+		for(size_t r = 0; r < getBoardLength(); ++r) {
+			for(size_t c = 0; c < getRowSize(r); ++c) {
+				auto T = getColour(r, c);
+				if(T != T_EMPTY) {
+					b.putToken(getBoardLength() - 1 - r,
+							   getRowSize(r) - 1 - c, T);
+				}
+			}
+		}
+		syms.push_back(b);
+	}
+
+	return syms;
 }
 
 std::string GameBoard::toString(const std::string &prefix, bool colour) const
@@ -258,6 +323,21 @@ std::string GameBoard::toString(const std::string &prefix, bool colour) const
 		ss << rowesc << (colour ? "\033[39m" : "") << (colour ? "\n" : "\\n");
 	}
 	return ss.str();
+}
+
+GameBoard::Hash GameBoard::encodeHash(bool normalize)
+{
+	if(! normalize) {
+		return encodeString();
+	}
+
+	// find the board symmetry with the lowest value, and return that.
+	GameBoard b(*this);
+	for(auto sb : getSymmetries()) {
+		if(sb < b) b = sb;
+	}
+
+	return b.encodeString();
 }
 
 std::string GameBoard::encodeString() const
