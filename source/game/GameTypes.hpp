@@ -18,9 +18,9 @@ enum TokenOrientation {
 	O_HORIZONTAL
 };
 enum TokenColour {
-	T_EMPTY,
-	T_RED,
-	T_WHITE
+	T_EMPTY = 0,
+	T_RED = 1,
+	T_WHITE = 2
 };
 
 enum WinType {

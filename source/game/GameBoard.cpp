@@ -35,6 +35,10 @@ TokenOrientation BoardRow::getOrientation(BoardIndex i) const
 GameBoard::GameBoard(BoardIndex length)
 	: _length(length)
 {
+	_colourLenths[T_EMPTY] = 0;
+	_colourLenths[T_RED] = _length+1;
+	_colourLenths[T_WHITE] = _length;
+
 	_rows.reserve((length*2)+1);
 	for(unsigned int r = 0; r < getBoardLength(); ++r) {
 		_rows.push_back(BoardRow(getRowColour(r), getRowSize(r)));
@@ -76,12 +80,6 @@ TokenOrientation GameBoard::getOrientation(BoardIndex row, BoardIndex i) const
 BoardIndex GameBoard::getRunSize() const
 {
 	return _length;
-}
-
-BoardIndex GameBoard::getRowSize(BoardIndex row) const
-{
-	auto run = getRunSize();
-	return (getRowColour(row)==T_RED? run+1 : run);
 }
 
 bool GameBoard::isTerminalRow(BoardIndex row) const

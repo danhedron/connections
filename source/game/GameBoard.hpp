@@ -61,6 +61,7 @@ public:
 class GameBoard
 {
 	std::vector<BoardRow> _rows;
+	BoardIndex _colourLenths[3];
 	BoardIndex _length;
 public:
 	GameBoard(BoardIndex length);
@@ -74,7 +75,7 @@ public:
 
 	BoardIndex getRunSize() const;
 
-	BoardIndex getRowSize(BoardIndex row) const;
+	BoardIndex getRowSize(BoardIndex row) const { return _colourLenths[getRowColour(row)]; }
 
 	bool isTerminalRow(BoardIndex row) const;
 

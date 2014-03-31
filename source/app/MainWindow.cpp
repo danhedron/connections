@@ -78,6 +78,7 @@ void MainWindow::makeMove(BoardIndex row, BoardIndex column)
 
 		mbx.exec();
 
+		redai = false;
 		resetGame();
 	}
 	else {
