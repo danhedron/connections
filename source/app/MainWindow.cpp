@@ -213,6 +213,6 @@ void MainWindow::writeGraphviz()
 			}
 		});
 
-		out << QString::fromStdString(GraphGen::graph(b, 2));
+		out << QString::fromStdString(GraphGen::graph(b, 3*2));
 	}
 }

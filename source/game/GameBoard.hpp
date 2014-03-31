@@ -113,7 +113,7 @@ public:
 	std::string toString(const std::string& prefix = "", bool colour = true) const;
 
 	typedef std::string Hash;
-	Hash encodeHash(bool normalize = false);
+	Hash encodeHash(bool normalize = false) const;
 
 	std::string encodeString() const;
 

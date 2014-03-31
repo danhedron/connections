@@ -44,7 +44,10 @@ public:
 
 class MinMaxAgent : public Agent
 {
+	/** Stats */
 	unsigned int tally;
+	unsigned int cacheHits;
+
 	unsigned int maxDepth;
 
 	std::random_device rdevice;

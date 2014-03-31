@@ -7,7 +7,7 @@
 #include <algorithm>
 
 MinMaxAgent::MinMaxAgent(TokenColour player, unsigned int maxDepth)
-	: Agent(player), tally(0), maxDepth(maxDepth), rengine(rdevice())
+	: Agent(player), tally(0), cacheHits(0), maxDepth(maxDepth), rengine(rdevice())
 {
 
 }
@@ -110,7 +110,7 @@ float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool p
 {
 	tally ++;
 	if(tally - tbuff >= 10000) {
-		std::cout << tally << " states" << std::endl;
+		std::cout << tally << " states / " << cacheHits << " cacheH " << " (" << (100.f*cacheHits)/tally << "%" << std::endl;
 		tbuff = tally;
 	}
 
@@ -118,11 +118,12 @@ float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool p
 
 	char scoremode = ' ';
 
-	auto it = _scorecache.find(board.encodeString());
+	auto it = _scorecache.find(board.encodeHash(true));
 
 	if(it != _scorecache.end()) {
 		scoremode = 'C';
 		statescore = it->second;
+		cacheHits++;
 	}
 	else if(board.isEndGame()) {
 		statescore = utility(board);
@@ -152,7 +153,7 @@ float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool p
 		}
 	}
 	if(scoremode != 'C') {
-		_scorecache.insert({board.encodeString(), statescore});
+		_scorecache.insert({board.encodeHash(true), statescore});
 		if(stateEvaluatedCallback()) {
 			stateEvaluatedCallback()(board, parent, statescore, alpha, beta, d, scoremode);
 		}
@@ -163,6 +164,7 @@ float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool p
 Move MinMaxAgent::calculateMove(const GameBoard& board)
 {
 	tally = 0;
+	cacheHits = 0;
 
 	_scorecache.clear();
 
@@ -182,7 +184,7 @@ Move MinMaxAgent::calculateMove(const GameBoard& board)
 			topMoves.push_back(move);
 		}
 	}
-	std::cout << "Evaulated " << tally << " states" << std::endl;
+	std::cout << tally << " states / " << cacheHits << " cacheH " << " (" << (100.f*cacheHits)/tally << "%" << std::endl;
 	std::cout << "Picked moves with score:  " << bestScore << std::endl;
 	std::uniform_int_distribution<int> unidist(0, topMoves.size()-1);
 	return topMoves.at(unidist(rengine));

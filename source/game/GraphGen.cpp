@@ -9,8 +9,9 @@ std::string baseatrib = "fontcolor=\"green\", fontname=\"times:bold\"";
 
 std::string GraphGen::boardNode(const GameBoard &b, const std::string& data, const std::string& colour, const std::string id)
 {
-	if(pic) pic(b, b.encodeString());
-	return b.encodeString() + " [image = \""+ b.encodeString() +".png\", "+baseatrib+", label=\""+data+"\", labelloc=\"b\", shape=\"box\", color=\""+colour+"\"]";
+	std::string hash = b.encodeHash(true);
+	if(pic) pic(b, hash);
+	return hash + " [image = \""+ hash +".png\", "+baseatrib+", label=\""+data+"\", labelloc=\"b\", shape=\"box\", color=\""+colour+"\"]";
 }
 
 std::string GraphGen::graph(const GameBoard &b, unsigned int depth)
@@ -23,7 +24,7 @@ std::string GraphGen::graph(const GameBoard &b, unsigned int depth)
 	MinMaxAgent agent(T_WHITE, depth);
 	agent.setStateEvaluatedCallback([&](const GameBoard& b, const GameBoard& p, float score, float alpha, float beta, size_t depth, char s)
 	{
-		ss << p.encodeString() << " -> " << b.encodeString() << ";\n";
+		ss << p.encodeHash(true) << " -> " << b.encodeHash(true) << ";\n";
 		TokenColour tc = ((depth%2==0) ? T_WHITE : T_RED);
 		std::stringstream sbuff;
 		std::stringstream snbg;

@@ -325,7 +325,7 @@ std::string GameBoard::toString(const std::string &prefix, bool colour) const
 	return ss.str();
 }
 
-GameBoard::Hash GameBoard::encodeHash(bool normalize)
+GameBoard::Hash GameBoard::encodeHash(bool normalize) const
 {
 	if(! normalize) {
 		return encodeString();
