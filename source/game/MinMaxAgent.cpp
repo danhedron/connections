@@ -26,51 +26,7 @@ float MinMaxAgent::utility(const GameBoard& board)
 
 float MinMaxAgent::eval(const GameBoard &b)
 {
-	float whitescore = 0.f;
-	for(BoardIndex r = 1; r < b.getBoardLength(); r += 2) {
-		if(b.getColour(r, 0) != T_WHITE) { continue; }
-		std::list<Move> open;
-		open.push_back({r, 0});
-		std::vector<Move> closed;
-		while(!open.empty()) {
-			Move& t = open.front();
-			closed.push_back(t);
-			if(b.getRowColour(t.row) == T_WHITE) {
-				whitescore = std::max(whitescore, (float)t.column);
-			}
-			auto adjacents = b.getAdjacentPoints(t.row, t.column);
-			for(Move& m : adjacents) {
-				if(b.getColour(m.row, m.column) != T_WHITE) { continue; }
-				if(std::find(open.begin(), open.end(), m) != open.end()) { continue; }
-				if(std::find(closed.begin(), closed.end(), m) != closed.end()) { continue; }
-				open.push_back(m);
-			}
-			open.pop_front();
-		}
-	}
-	float redscore = 0.f;
-	for(BoardIndex c = 0; c < b.getRowSize(1); c += 1) {
-		if(b.getColour(1, c) != T_RED) { continue; }
-		std::list<Move> open;
-		open.push_back({1, c});
-		std::vector<Move> closed;
-		while(!open.empty()) {
-			Move& t = open.front();
-			closed.push_back(t);
-			if(b.getRowColour(t.row) == T_WHITE) {
-				redscore = std::max(redscore, (float)t.row);
-			}
-			auto adjacents = b.getAdjacentPoints(t.row, t.column);
-			for(Move& m : adjacents) {
-				if(b.getColour(m.row, m.column) != T_RED) { continue; }
-				if(std::find(open.begin(), open.end(), m) != open.end()) { continue; }
-				if(std::find(closed.begin(), closed.end(), m) != closed.end()) { continue; }
-				open.push_back(m);
-			}
-			open.pop_front();
-		}
-	}
-	return colour() == T_RED ? redscore: whitescore;
+	return colour() == T_RED ? -50.f : 50.f;
 }
 
 float MinMaxAgent::minValue(const GameBoard& oldboard, const Move& move, unsigned int d)
@@ -106,12 +62,16 @@ float MinMaxAgent::maxValue(const GameBoard& oldboard, const Move& move, unsigne
 }
 
 int tbuff= 0;
+int wcachehits = 0;
 float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool player, float alpha, float beta, unsigned int d)
 {
 	tally ++;
 	if(tally - tbuff >= 10000) {
-		std::cout << tally << " states / " << cacheHits << " cacheH " << " (" << (100.f*cacheHits)/tally << "%" << std::endl;
+		std::cout << tally << " states / " << cacheHits << " cacheH " << " / "
+				  << (100.f*cacheHits)/tally << "% / "
+				  << (100.f*wcachehits)/tbuff << "%" << std::endl;
 		tbuff = tally;
+		wcachehits = 0;
 	}
 
 	float statescore = -1.f;
@@ -123,7 +83,7 @@ float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool p
 	if(it != _scorecache.end()) {
 		scoremode = 'C';
 		statescore = it->second;
-		cacheHits++;
+		cacheHits++; wcachehits++;
 	}
 	else if(board.isEndGame()) {
 		statescore = utility(board);

@@ -157,10 +157,10 @@ void MainWindow::resetGame()
 	if(redPlayerAgent) {
 		delete redPlayerAgent;
 	}
-	whitePlayerAgent = new MinMaxAgent(T_WHITE, gb->getRunSize());
+	whitePlayerAgent = new MinMaxAgent(T_WHITE, (gb->getRunSize()+1)*2);
 
 	if(redai) {
-		redPlayerAgent = new MinMaxAgent(T_RED, gb->getRunSize());
+		redPlayerAgent = new MinMaxAgent(T_RED, (gb->getRunSize()+1)*2);
 
 		queueAIMove(redPlayerAgent, T_RED);
 	}
