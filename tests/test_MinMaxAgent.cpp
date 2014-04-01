@@ -19,8 +19,8 @@ BOOST_AUTO_TEST_CASE(MinMaxTest)
 	board.putToken(5,1, T_WHITE);
 	print_board(board);
 
-	MinMaxAgent redagent(T_RED, board.getRunSize());
-	MinMaxAgent whiteagent(T_WHITE, board.getRunSize());
+	MinMaxAgent redagent(T_RED, board.getRunSize()/2);
+	MinMaxAgent whiteagent(T_WHITE, board.getRunSize()/2);
 
 	for(int i = 0; ! board.isEndGame(); ++i) {
 		if(i%2==0) {

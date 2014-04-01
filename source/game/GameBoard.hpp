@@ -56,6 +56,13 @@ public:
 	 * Returns the orientation in the row at the given index
 	 */
 	TokenOrientation getOrientation(BoardIndex i) const;
+
+	/**
+	 * Returns the colour of the token at the given index.
+	 */
+	TokenColour operator[](BoardIndex i) const {
+		return tokens[i];
+	}
 };
 
 class GameBoard
@@ -70,6 +77,8 @@ public:
 	void putToken(BoardIndex row, BoardIndex i, TokenColour t);
 
 	TokenColour getColour(BoardIndex row, BoardIndex i) const;
+
+	const BoardRow& operator[](BoardIndex r) const { return _rows[r]; }
 
 	TokenOrientation getOrientation(BoardIndex row, BoardIndex i) const;
 

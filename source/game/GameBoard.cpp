@@ -238,8 +238,8 @@ bool GameBoard::operator<(const GameBoard &rhs) const
 {
 	for(int r = getBoardLength()-1; r >= 0; --r) {
 		for(int c = getRowSize(r) - 1; c >= 0; --c) {
-			auto tL = getColour(r, c);
-			auto tR = rhs.getColour(r, c);
+			auto tL = (*this)[r][c];
+			auto tR = rhs[r][c];
 			if(tL == T_EMPTY && tR == T_EMPTY) continue;
 			return tL < tR;
 		}

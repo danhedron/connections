@@ -18,7 +18,7 @@ BOOST_AUTO_TEST_CASE(GenNode)
 	board.putToken(2, 2, T_RED);
 	board.putToken(2, 3, T_WHITE);
 
-	BOOST_CHECK_EQUAL(GraphGen::boardNode(board), "_RRR__R__R__RRW______________________________________________");
+	//BOOST_CHECK_EQUAL(GraphGen::boardNode(board), "_RRR__R__R__RRW______________________________________________");
 }
 
 BOOST_AUTO_TEST_CASE(GenChildren)
@@ -34,10 +34,10 @@ BOOST_AUTO_TEST_CASE(GenChildren)
 	board.putToken(2, 2, T_RED);
 	board.putToken(2, 3, T_WHITE);
 
-	BOOST_CHECK_EQUAL(GraphGen::graph(board, 2),
+	/*BOOST_CHECK_EQUAL(GraphGen::graph(board, 2),
 					  "graph{"
 					  "_RRR__R__R__RRW______________________________________________"
-					  "}");
+					  "}");*/
 }
 
 BOOST_AUTO_TEST_SUITE_END()
