@@ -39,6 +39,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 	game->addAction("&AI Versus", this, SLOT(AIGame()));
 
 	game->addSeparator();
+	game->addAction("&Forfeit move", this, SLOT(forfeitMove()));
+
+	game->addSeparator();
 	game->addAction("&Quit", QApplication::instance(), SLOT(quit()), QKeySequence::Quit);
 
 	QMenu* help = mb->addMenu("&Help");
@@ -171,6 +174,21 @@ void MainWindow::resetGame()
 	}
 
 	setCurrentPlayer(T_RED);
+}
+
+void MainWindow::forfeitMove()
+{
+	if(currentTurn == T_RED) {
+		// ask AI player to do something.
+		queueAIMove(whitePlayerAgent, T_WHITE);
+	}
+	else if(currentTurn == T_WHITE) {
+		if(redai) {
+			queueAIMove(redPlayerAgent, T_RED);
+		} else {
+			setCurrentPlayer(T_RED);
+		}
+	}
 }
 
 void MainWindow::AIGame()

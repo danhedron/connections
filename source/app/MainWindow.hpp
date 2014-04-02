@@ -54,6 +54,8 @@ private slots:
 
 	void resetGame();
 
+	void forfeitMove();
+
 	void AIGame();
 
 	void playerClick(BoardIndex row, BoardIndex column);
