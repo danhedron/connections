@@ -144,7 +144,9 @@ Move MinMaxAgent::calculateMove(const GameBoard& board)
 			topMoves.push_back(move);
 		}
 	}
-	std::cout << tally << " states / " << cacheHits << " cacheH " << " (" << (100.f*cacheHits)/tally << "%" << std::endl;
+	std::cout << tally << " states / " << cacheHits << " cacheH " << " / "
+			  << (100.f*cacheHits)/tally << "% / "
+			  << (100.f*wcachehits)/tbuff << "%" << std::endl;
 	std::cout << "Picked moves with score:  " << bestScore << std::endl;
 	std::uniform_int_distribution<int> unidist(0, topMoves.size()-1);
 	return topMoves.at(unidist(rengine));
