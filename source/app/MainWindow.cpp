@@ -113,12 +113,16 @@ void MainWindow::setCurrentPlayer(TokenColour player)
 {
 	if(! gbw->gameBoard()->isEndGame()) {
 		currentTurn = player;
+		QString currentName = "White";
+		QString currentStatus = "Thinking";
 		if(currentTurn == T_RED) {
-			statusLabel->setText("Reds turn");
+			currentName = "Red";
+			if(! redai) {
+				currentStatus = "Waiting for input";
+			}
 		}
-		else {
-			statusLabel->setText("Whites turn");
-		}
+		statusLabel->setText(QString("%1's Turn (%2)")
+							 .arg(currentName).arg(currentStatus));
 	}
 }
 
