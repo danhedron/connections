@@ -21,7 +21,7 @@ void MainWindow::queueAIMove(Agent *agent, TokenColour tc)
 
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 	: QMainWindow(parent, flags), gbw(nullptr), boardSize(5), redai(false),
-	  redPlayerAgent(nullptr), whitePlayerAgent(nullptr)
+	  redPlayerAgent(nullptr), whitePlayerAgent(nullptr), startBoard(5)
 {
 	setMinimumSize(300, 300);
 
@@ -39,14 +39,19 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 	game->addAction("&AI Versus", this, SLOT(AIGame()));
 
 	game->addSeparator();
-	game->addAction("&Forfeit move", this, SLOT(forfeitMove()));
-
-	game->addSeparator();
 	game->addAction("&Quit", QApplication::instance(), SLOT(quit()), QKeySequence::Quit);
+
+	QMenu* state = mb->addMenu("&State");
+
+	state->addAction("&Forfeit move", this, SLOT(forfeitMove()));
+	state->addSeparator();
+	state->addAction("&Print History", this, SLOT(printGameHistory()));
+	state->addAction("Write &Graph", this, SLOT(writeGraphviz()));
+	state->addAction("Write &Image", this, SLOT(writeStateImage()));
+
 
 	QMenu* help = mb->addMenu("&Help");
 	help->addAction("&About Qt", QGuiApplication::instance(), SLOT(aboutQt()));
-	help->addAction("Write &Graph", this, SLOT(writeGraphviz()));
 
 	statusLabel = new QLabel();
 	statusBar()->addWidget(statusLabel);
@@ -65,6 +70,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 void MainWindow::makeMove(BoardIndex row, BoardIndex column)
 {
 	gbw->gameBoard()->putToken(row, column, currentTurn);
+	history.push_back(*gbw->gameBoard());
 	gbw->update();
 	if(gbw->gameBoard()->isEndGame()) {
 		auto winner = gbw->gameBoard()->getWinner();
@@ -129,6 +135,12 @@ void MainWindow::setCurrentPlayer(TokenColour player)
 	}
 }
 
+void MainWindow::setStartBoard(const GameBoard &b)
+{
+	startBoard = b;
+	resetGame();
+}
+
 void MainWindow::smallGame()
 {
 	boardSize = 3;
@@ -155,8 +167,16 @@ void MainWindow::largeGame()
 
 void MainWindow::resetGame()
 {
+	history.clear();
+
 	delete gbw->gameBoard();
-	GameBoard* gb = new GameBoard(boardSize);
+	GameBoard* gb = nullptr;
+	if(startBoard.getRunSize() == boardSize) {
+		gb = new GameBoard(startBoard);
+	}
+	else {
+		gb = new GameBoard(boardSize);
+	}
 	gbw->setGameBoard(gb);
 
 	if(whitePlayerAgent) {
@@ -165,10 +185,10 @@ void MainWindow::resetGame()
 	if(redPlayerAgent) {
 		delete redPlayerAgent;
 	}
-	whitePlayerAgent = new MinMaxAgent(T_WHITE, (gb->getRunSize()+1)*2);
+	whitePlayerAgent = new MinMaxAgent(T_WHITE, (gb->getRunSize()));
 
 	if(redai) {
-		redPlayerAgent = new MinMaxAgent(T_RED, (gb->getRunSize()+1)*2);
+		redPlayerAgent = new MinMaxAgent(T_RED, (gb->getRunSize()));
 
 		queueAIMove(redPlayerAgent, T_RED);
 	}
@@ -237,5 +257,25 @@ void MainWindow::writeGraphviz()
 		});
 
 		out << QString::fromStdString(GraphGen::graph(b, 3*2));
+	}
+}
+
+void MainWindow::writeStateImage()
+{
+	QFileDialog dialog(this);
+	dialog.setFileMode(QFileDialog::AnyFile);
+	dialog.setNameFilter(tr("PNG image (*.png)"));
+	if(dialog.exec()) {
+		QImage image(512, 512, QImage::Format_RGB888);
+		QPainter imp(&image);
+		GameBoardWidget::paintBoard(gbw->gameBoard(), imp);
+		image.save(dialog.selectedFiles()[0]);
+	}
+}
+
+void MainWindow::printGameHistory()
+{
+	for(const GameBoard& g : history) {
+		std::cout << g.encodeString() << std::endl;
 	}
 }

@@ -40,6 +40,7 @@ int main(int argc, char** argv)
 	QApplication app(argc, argv);
 
 	unsigned int depth = 2, vdepth = 2;
+	bool showlabels = true;
 	int deparg = hasarg(argv, argc, "-graph-depth", true);
 	if(deparg != -1) {
 		depth = atoi(argv[deparg+1]);
@@ -47,6 +48,10 @@ int main(int argc, char** argv)
 	int vdeparg = hasarg(argv, argc, "-graph-view", true);
 	if(vdeparg != -1) {
 		vdepth = atoi(argv[vdeparg+1]);
+	}
+	int vlabelarg = hasarg(argv, argc, "-graph-silent");
+	if(vlabelarg!= -1) {
+		showlabels = false;
 	}
 
 	int arc = hasarg(argv, argc, "-graph-from", true);
@@ -78,10 +83,18 @@ int main(int argc, char** argv)
 			}
 		});
 
-		out << QString::fromStdString(GraphGen::graph(b, depth, vdepth));
+		out << QString::fromStdString(GraphGen::graph(b, depth, vdepth, showlabels));
 	}
 	else {
 		MainWindow mw;
+
+		int sarg = hasarg(argv, argc, "-start-from", true);
+		if(sarg != -1) {
+			std::string seq = argv[sarg+1];
+			size_t n = atoi(seq.substr(0,1).c_str());
+			GameBoard b(n, seq.substr(1));
+			mw.setStartBoard(b);
+		}
 
 		mw.show();
 

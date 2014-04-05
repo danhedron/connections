@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QLabel>
 #include <GameTypes.hpp>
+#include <GameBoard.hpp>
 
 class GameBoardWidget;
 class Agent;
@@ -29,11 +30,17 @@ class MainWindow : public QMainWindow
 
 	void queueAIMove(Agent* agent, TokenColour tc);
 
+	GameBoard startBoard;
+
+	std::vector<GameBoard> history;
+
 public:
 
 	MainWindow(QWidget* parent = 0, Qt::WindowFlags flags = 0);
 
 	void setCurrentPlayer(TokenColour player);
+
+	void setStartBoard(const GameBoard &b);
 
 public slots:
 
@@ -61,6 +68,10 @@ private slots:
 	void playerClick(BoardIndex row, BoardIndex column);
 
 	void writeGraphviz();
+
+	void writeStateImage();
+
+	void printGameHistory();
 };
 
 #endif 

@@ -14,7 +14,7 @@ std::string GraphGen::boardNode(const GameBoard &b, const std::string& data, con
 	return hash + " [image = \""+ hash +".png\", "+baseatrib+", label=\""+data+"\", labelloc=\"b\", shape=\"box\", color=\""+colour+"\"]";
 }
 
-std::string GraphGen::graph(const GameBoard &b, unsigned int thinkDepth, unsigned int showDepth)
+std::string GraphGen::graph(const GameBoard &b, unsigned int thinkDepth, unsigned int showDepth, bool showlabel)
 {
 	if(showDepth == 0) showDepth = thinkDepth;
 	std::stringstream ss;
@@ -30,8 +30,10 @@ std::string GraphGen::graph(const GameBoard &b, unsigned int thinkDepth, unsigne
 		TokenColour tc = ((depth%2==0) ? T_WHITE : T_RED);
 		std::stringstream sbuff;
 		std::stringstream snbg;
-		snbg << depth;
-		sbuff << s << "\\n" << score << "\\n" << alpha << "\\n" << beta;
+		if(showlabel) {
+			snbg << depth;
+			sbuff << s << "\\n" << score << "\\n" << alpha << "\\n" << beta;
+		}
 		ss << boardNode(b, sbuff.str(), (tc==T_RED) ? "red" : "white", snbg.str()) << "\n";
 	});
 
