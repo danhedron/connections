@@ -5,6 +5,7 @@
 #include <iostream>
 #include <list>
 #include <algorithm>
+#include <chrono>
 
 MinMaxAgent::MinMaxAgent(TokenColour player, unsigned int maxDepth)
 	: Agent(player), tally(0), cacheHits(0), maxDepth(maxDepth), rengine(rdevice())
@@ -63,13 +64,19 @@ float MinMaxAgent::maxValue(const GameBoard& oldboard, const Move& move, unsigne
 
 int tbuff= 0;
 int wcachehits = 0;
+std::chrono::time_point<std::chrono::system_clock> startClock, now;
 float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool player, float alpha, float beta, unsigned int d)
 {
 	tally ++;
 	if(tally - tbuff >= 10000) {
-		std::cout << tally << " states / " << cacheHits << " cacheH " << " / "
+		now = std::chrono::system_clock::now();
+		std::chrono::duration<float> elapsed = now - startClock;
+
+		std::cout << tally << " states / " << cacheHits << " cacheH / "
 				  << (100.f*cacheHits)/tally << "% / "
-				  << (100.f*wcachehits)/tbuff << "%" << std::endl;
+				  << (100.f*wcachehits)/tbuff << "% / "
+				  << (tally/elapsed.count()) << " states/s" << std::endl;
+
 		tbuff = tally;
 		wcachehits = 0;
 	}
@@ -125,8 +132,8 @@ Move MinMaxAgent::calculateMove(const GameBoard& board)
 {
 	tally = 0;
 	cacheHits = 0;
-
 	_scorecache.clear();
+	startClock = std::chrono::system_clock::now();
 
 	auto moves = board.availableMoves(colour());
 	float bestScore = -std::numeric_limits<float>::max();
@@ -144,9 +151,12 @@ Move MinMaxAgent::calculateMove(const GameBoard& board)
 			topMoves.push_back(move);
 		}
 	}
-	std::cout << tally << " states / " << cacheHits << " cacheH " << " / "
+	now = std::chrono::system_clock::now();
+	std::chrono::duration<float> elapsed = now - startClock;
+	std::cout << tally << " states / " << cacheHits << " cacheH / "
 			  << (100.f*cacheHits)/tally << "% / "
-			  << (100.f*wcachehits)/tbuff << "%" << std::endl;
+			  << (100.f*wcachehits)/tbuff << "% / "
+			  << (tally/elapsed.count()) << " states/s" << std::endl;
 	std::cout << "Picked moves with score:  " << bestScore << std::endl;
 	std::uniform_int_distribution<int> unidist(0, topMoves.size()-1);
 	return topMoves.at(unidist(rengine));
