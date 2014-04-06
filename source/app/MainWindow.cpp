@@ -185,10 +185,14 @@ void MainWindow::resetGame()
 	if(redPlayerAgent) {
 		delete redPlayerAgent;
 	}
-	whitePlayerAgent = new MinMaxAgent(T_WHITE, (gb->getRunSize()));
+
+	int thinksize = gb->getRunSize()*gb->getRunSize();
+	if(boardSize > 3) thinksize = gb->getRunSize();
+
+	whitePlayerAgent = new MinMaxAgent(T_WHITE, thinksize);
 
 	if(redai) {
-		redPlayerAgent = new MinMaxAgent(T_RED, (gb->getRunSize()));
+		redPlayerAgent = new MinMaxAgent(T_RED, thinksize);
 
 		queueAIMove(redPlayerAgent, T_RED);
 	}
@@ -256,7 +260,7 @@ void MainWindow::writeGraphviz()
 			}
 		});
 
-		out << QString::fromStdString(GraphGen::graph(b, 3*2));
+		out << QString::fromStdString(GraphGen::graph(b, 3*2, 3));
 	}
 }
 
