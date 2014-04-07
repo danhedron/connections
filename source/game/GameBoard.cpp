@@ -333,13 +333,11 @@ GameBoard::Hash GameBoard::encodeHash(bool normalize) const
 		for(BoardIndex r = 0; r < getBoardLength(); ++r) {
 			for(BoardIndex c = 0; c < getRowSize(r); ++c) {
 				int byte = (i/magic);
-				int val = 0;
-				if(getColour(r, c) == T_RED) {
-					val	= 1;
-				} else if(getColour(r,c) == T_WHITE) {
-					val	= 2;
+				if((*this)[r][c] == T_RED) {
+					h.data[byte] |= (1 << (i%magic));
+				} else if((*this)[r][c] == T_WHITE) {
+					h.data[byte] |= (2 << (i%magic));
 				}
-				h.data[byte] |= (val << (i%magic));
 				i+=2;
 			}
 		}
