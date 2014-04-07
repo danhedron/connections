@@ -27,7 +27,51 @@ float MinMaxAgent::utility(const GameBoard& board)
 
 float MinMaxAgent::eval(const GameBoard &b)
 {
-	return 0.f; //colour() == T_RED ? -50.f : 50.f;
+	float redscore = 0.f;
+	float whitescore = 0.f;
+	for(BoardIndex r = 1; r < b.getBoardLength(); r += 2) {
+		if(b.getColour(r, 0) != T_WHITE) { continue; }
+		std::list<Move> open;
+		open.push_back({r, 0});
+		std::vector<Move> closed;
+		while(!open.empty()) {
+			Move& t = open.front();
+			closed.push_back(t);
+			if(b.getRowColour(t.row) == T_WHITE) {
+				whitescore = std::max(whitescore, (float)t.row);
+			}
+			auto adjacents = b.getAdjacentPoints(t.row, t.column);
+			for(Move& m : adjacents) {
+				if(b.getColour(m.row, m.column) != T_WHITE) { continue; }
+				if(std::find(open.begin(), open.end(), m) != open.end()) { continue; }
+				if(std::find(closed.begin(), closed.end(), m) != closed.end()) { continue; }
+				open.push_back(m);
+			}
+			open.pop_front();
+		}
+	}
+	for(BoardIndex c = 0; c < b.getRowSize(1); c += 1) {
+		if(b.getColour(1, c) != T_RED) { continue; }
+		std::list<Move> open;
+		open.push_back({1, c});
+		std::vector<Move> closed;
+		while(!open.empty()) {
+			Move& t = open.front();
+			closed.push_back(t);
+			if(t.row == b.getBoardLength()-2) {
+				whitescore = std::max(whitescore, t.column/2.f);
+			}
+			auto adjacents = b.getAdjacentPoints(t.row, t.column);
+			for(Move& m : adjacents) {
+				if(b.getColour(m.row, m.column) != T_RED) { continue; }
+				if(std::find(open.begin(), open.end(), m) != open.end()) { continue; }
+				if(std::find(closed.begin(), closed.end(), m) != closed.end()) { continue; }
+				open.push_back(m);
+			}
+			open.pop_front();
+		}
+	}
+	return colour() == T_RED ? (redscore - whitescore) : (whitescore - redscore);
 }
 
 float MinMaxAgent::minValue(const GameBoard& oldboard, const Move& move, unsigned int d)
@@ -96,7 +140,7 @@ float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool p
 		statescore = utility(board);
 		scoremode = 'T';
 	}
-	else if(d > maxDepth) {
+	else if(false && d > maxDepth) {
 		statescore = eval(board);
 		scoremode = 'E';
 	}

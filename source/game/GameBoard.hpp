@@ -4,6 +4,7 @@
 #include <vector>
 #include "GameTypes.hpp"
 #include <string>
+#include <iostream>
 
 /**
   Board hash structure (due to the insane state size..)

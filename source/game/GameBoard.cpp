@@ -340,6 +340,7 @@ GameBoard::Hash GameBoard::encodeHash(bool normalize) const
 					val	= 2;
 				}
 				h.data[byte] |= (val << (i%magic));
+				i+=2;
 			}
 		}
 

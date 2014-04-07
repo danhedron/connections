@@ -186,8 +186,8 @@ void MainWindow::resetGame()
 		delete redPlayerAgent;
 	}
 
-	int thinksize = gb->getRunSize()*gb->getRunSize();
-	if(boardSize > 3) thinksize = gb->getRunSize();
+	int thinksize = gb->getRunSize()*gb->getRunSize()*4;
+	if(boardSize > 4) thinksize = gb->getRunSize();
 
 	whitePlayerAgent = new MinMaxAgent(T_WHITE, thinksize);
 
@@ -260,7 +260,7 @@ void MainWindow::writeGraphviz()
 			}
 		});
 
-		out << QString::fromStdString(GraphGen::graph(b, 3*2, 3));
+		out << QString::fromStdString(GraphGen::graph(b, 3*2, 4));
 	}
 }
 

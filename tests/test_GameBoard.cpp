@@ -383,6 +383,29 @@ BOOST_AUTO_TEST_CASE(Board_Test_Path)
 	}
 }
 
+std::ostream& operator<<(std::ostream& stream, const GameBoard::Hash& h) {
+	stream << h.data[0] << h.data[1] << h.data[2] << h.data[3];
+	return stream;
+}
+
+BOOST_AUTO_TEST_CASE(Board_Hash_test)
+{
+	{
+		GameBoard b1(5);
+		GameBoard b2(5);
+
+		b1.putToken(1, 0, T_RED);
+		b2.putToken(1, 1, T_RED);
+
+		GameBoard::Hash h1 = b1.encodeHash(true);
+		GameBoard::Hash h2 = b2.encodeHash(true);
+
+		std::cout << h1 << " " << h2 <<  std::endl;
+
+		BOOST_CHECK( (h1 == h2) == false );
+	}
+}
+
 BOOST_AUTO_TEST_CASE(Board_Symmetry_test)
 {
 	{
@@ -410,7 +433,13 @@ BOOST_AUTO_TEST_CASE(Board_Symmetry_test)
 		b1.putToken(1, 0, T_RED);
 		b2.putToken(1, 4, T_RED);
 
-		//BOOST_CHECK_EQUAL(b1.encodeHash(true), b2.encodeHash(true));
+		GameBoard::Hash h1 = b1.encodeHash(true);
+		GameBoard::Hash h2 = b2.encodeHash(true);
+		GameBoard::Hash h3 = b2.encodeHash(false);
+
+		BOOST_CHECK(h1 == h2);
+		BOOST_CHECK((h1 < h2) == false);
+		BOOST_CHECK((h1 == h3) == false);
 	}
 	{
 		GameBoard b1(5);
@@ -419,7 +448,11 @@ BOOST_AUTO_TEST_CASE(Board_Symmetry_test)
 		b1.putToken(1, 0, T_RED);
 		b2.putToken(9, 0, T_RED);
 
-		//BOOST_CHECK_EQUAL(b1.encodeHash(true), b2.encodeHash(true));
+		GameBoard::Hash h1 = b1.encodeHash(true);
+		GameBoard::Hash h2 = b2.encodeHash(true);
+
+		BOOST_CHECK(h1 == h2);
+		BOOST_CHECK((h1 < h2) == false);
 	}
 }
 
