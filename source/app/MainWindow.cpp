@@ -56,7 +56,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 	statusLabel = new QLabel();
 	statusBar()->addWidget(statusLabel);
 
-	gbw = new GameBoardWidget;
+	gbw = new GameBoardWidget(this);
 	
 	setCentralWidget(gbw);
 
@@ -186,7 +186,7 @@ void MainWindow::resetGame()
 		delete redPlayerAgent;
 	}
 
-	int thinksize = gb->getRunSize()*2;
+	int thinksize = 100; //gb->getRunSize()*2;
 	if(boardSize > 4) thinksize = gb->getRunSize();
 
 	whitePlayerAgent = new MinMaxAgent(T_WHITE, thinksize);

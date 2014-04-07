@@ -15,6 +15,8 @@ class GameBoardWidget : public QWidget
 
 	static QTransform calculateBoardTransform(const GameBoard *board, QPaintDevice *d);
 public:
+
+	GameBoardWidget(QWidget *parent);
 	
 	GameBoard* gameBoard() const;
 	

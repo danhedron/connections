@@ -30,6 +30,12 @@ QTransform GameBoardWidget::calculateBoardTransform(const GameBoard* board, QPai
 	return tScale * tOffset;
 }
 
+GameBoardWidget::GameBoardWidget(QWidget *parent)
+	: QWidget(parent), board(nullptr)
+{
+
+}
+
 void GameBoardWidget::paintEvent(QPaintEvent*)
 {
 	QPainter p(this);
