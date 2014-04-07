@@ -5,33 +5,6 @@
 #include <list>
 #include <sstream>
 
-BoardRow::BoardRow(TokenColour c, BoardIndex l)
-	: rowColour(c)
-{
-	tokens.resize(l);
-	for(unsigned int i = 0; i < l; ++i) {
-		tokens[i] = T_EMPTY;
-	}
-}
-
-void BoardRow::putToken(BoardIndex i, TokenColour colour)
-{
-	assert(i < tokens.size());
-	tokens[i] = colour;
-}
-
-TokenColour BoardRow::getColour(BoardIndex i) const
-{
-	assert(i < tokens.size());
-	return tokens[i];
-}
-
-TokenOrientation BoardRow::getOrientation(BoardIndex i) const
-{
-	assert(i < tokens.size());
-	return tokens[i] == rowColour ? O_HORIZONTAL : O_VERTICAL;
-}
-
 GameBoard::GameBoard(BoardIndex length)
 	: _length(length)
 {
@@ -39,10 +12,10 @@ GameBoard::GameBoard(BoardIndex length)
 	_colourLenths[T_RED] = _length+1;
 	_colourLenths[T_WHITE] = _length;
 
-	_rows.reserve((length*2)+1);
-	for(unsigned int r = 0; r < getBoardLength(); ++r) {
-		_rows.push_back(BoardRow(getRowColour(r), getRowSize(r)));
-	}
+	size_t redRows = length+1;
+	size_t whiteRows = length;
+
+	_tokens.resize((redRows * getRowSize(0)) + (whiteRows * getRowSize(1)), T_EMPTY);
 }
 
 GameBoard::GameBoard(BoardIndex length, const std::string &data)
@@ -59,22 +32,45 @@ GameBoard::GameBoard(BoardIndex length, const std::string &data)
 	}
 }
 
+int calculateIndex(const GameBoard& b, int row, int column)
+{
+	if(b.getRowColour(row) == T_WHITE) {
+		size_t redRows = std::ceil(row/2)+1;
+		size_t whiteRows = std::ceil(row/2);
+		return redRows * b.getRowSize(0) + whiteRows * b.getRowSize(1) + column;
+	} else {
+		size_t redRows = std::ceil(row/2);
+		size_t whiteRows = std::ceil(row/2);
+		return redRows * b.getRowSize(0) + whiteRows * b.getRowSize(1) + column;
+	}
+}
+
 void GameBoard::putToken(BoardIndex row, BoardIndex i, TokenColour t)
 {
-	assert(row < _rows.size());
-	_rows[row].putToken(i, t);
+	assert(row < getBoardLength());
+	_tokens[calculateIndex(*this, row, i)] = t;
 }
 
 TokenColour GameBoard::getColour(BoardIndex row, BoardIndex i) const
 {
-	assert(row < _rows.size());
-	return _rows[row].getColour(i);
+	assert(row < getBoardLength());
+	return _tokens[calculateIndex(*this, row, i)];
+}
+
+TokenColour &GameBoard::operator()(BoardIndex r, BoardIndex c)
+{
+	return _tokens[calculateIndex(*this, r, c)];
+}
+
+const TokenColour &GameBoard::operator()(BoardIndex r, BoardIndex c) const
+{
+	return _tokens[calculateIndex(*this, r, c)];
 }
 
 TokenOrientation GameBoard::getOrientation(BoardIndex row, BoardIndex i) const
 {
-	assert(row < _rows.size());
-	return _rows[row].getOrientation(i);
+	assert(row < getBoardLength());
+	return getColour(row, i) == getRowColour(row) ? O_HORIZONTAL : O_VERTICAL;
 }
 
 BoardIndex GameBoard::getRunSize() const
@@ -102,7 +98,7 @@ BoardIndex GameBoard::getBoardLength() const
 std::vector<Move> GameBoard::availableMoves(TokenColour tc) const
 {
 	std::vector<Move> moves;
-	for(unsigned int r = 0; r < _rows.size(); ++r) {
+	for(unsigned int r = 0; r < getBoardLength(); ++r) {
 		for(unsigned int c = 0; c < getRowSize(r); ++c) {
 			if(getColour(r, c) == T_EMPTY && isValidMove(tc, r, c)) {
 				moves.push_back({r, c});
@@ -126,17 +122,17 @@ bool GameBoard::isValidMove(TokenColour colour, BoardIndex r, BoardIndex c) cons
 
 void GameBoard::reset()
 {
-	for(unsigned int r = 0; r < _rows.size(); ++r) {
+	for(unsigned int r = 0; r < getBoardLength(); ++r) {
 		for(unsigned int c = 0; c < getRowSize(r); ++c) {
-			_rows[r].putToken(c, T_EMPTY);
+			(*this)(r,c) = T_EMPTY;
 		}
 	}
 }
 
-std::vector<Move> GameBoard::getAdjacentPoints(BoardIndex r, BoardIndex c) const
+void GameBoard::getAdjacentPoints(BoardIndex r, BoardIndex c, std::vector<Move>& points) const
 {
 	TokenColour tc = getColour(r, c);
-	return getAdjacentPoints(r, c, tc);
+	getAdjacentPoints(r, c, tc, points);
 }
 
 void addIfValid(std::vector<Move>& p, const GameBoard* b, BoardIndex r, BoardIndex c)
@@ -150,10 +146,8 @@ void addIfValid(std::vector<Move>& p, const GameBoard* b, BoardIndex r, BoardInd
 	p.push_back({r,c});
 }
 
-std::vector<Move> GameBoard::getAdjacentPoints(BoardIndex r, BoardIndex c, TokenColour tc) const
+void GameBoard::getAdjacentPoints(BoardIndex r, BoardIndex c, TokenColour tc, std::vector<Move>& points) const
 {
-	std::vector<Move> points;
-	points.reserve(8);
 	if(getRowColour(r) == T_RED) {
 		addIfValid(points, this, r-1, c - 1);
 		addIfValid(points, this, r-1, c    );
@@ -186,12 +180,11 @@ std::vector<Move> GameBoard::getAdjacentPoints(BoardIndex r, BoardIndex c, Token
 			addIfValid(points, this, r, c+1);
 		}
 	}
-	return points;
 }
 
 GameBoard GameBoard::apply(const Move &m, TokenColour c) const
 {
-	GameBoard gb(*this);
+	GameBoard gb(getRunSize(), encodeString());
 	gb.putToken(m.row, m.column, c);
 	return gb;
 }
@@ -238,8 +231,8 @@ bool GameBoard::operator<(const GameBoard &rhs) const
 {
 	for(int r = getBoardLength()-1; r >= 0; --r) {
 		for(int c = getRowSize(r) - 1; c >= 0; --c) {
-			auto tL = (*this)[r][c];
-			auto tR = rhs[r][c];
+			auto tL = (*this)(r,c);
+			auto tR = rhs(r,c);
 			if(tL == T_EMPTY && tR == T_EMPTY) continue;
 			return tL < tR;
 		}
@@ -329,13 +322,13 @@ GameBoard::Hash GameBoard::encodeHash(bool normalize) const
 		Hash h;
 
 		int i = 0;
-		static int magic = sizeof(unsigned int);
+		static int magic = sizeof(unsigned int)*8;
 		for(BoardIndex r = 0; r < getBoardLength(); ++r) {
 			for(BoardIndex c = 0; c < getRowSize(r); ++c) {
 				int byte = (i/magic);
-				if((*this)[r][c] == T_RED) {
+				if((*this)(r,c) == T_RED) {
 					h.data[byte] |= (1 << (i%magic));
-				} else if((*this)[r][c] == T_WHITE) {
+				} else if((*this)(r,c) == T_WHITE) {
 					h.data[byte] |= (2 << (i%magic));
 				}
 				i+=2;
@@ -346,7 +339,7 @@ GameBoard::Hash GameBoard::encodeHash(bool normalize) const
 	}
 
 	// find the board symmetry with the lowest value, and return that.
-	GameBoard b(*this);
+	GameBoard b = *this;
 	for(auto sb : getSymmetries()) {
 		if(sb < b) b = sb;
 	}
@@ -375,7 +368,7 @@ std::string GameBoard::encodeString() const
 
 TokenColour GameBoard::getAcrossBoardWinner() const
 {
-	for(BoardIndex r = 1; r < _rows.size(); r += 2) {
+	for(BoardIndex r = 1; r < getBoardLength(); r += 2) {
 		if(getColour(r, 0) != T_WHITE) { continue; }
 		std::list<Move> open;
 		open.push_back({r, 0});
@@ -386,7 +379,8 @@ TokenColour GameBoard::getAcrossBoardWinner() const
 			if(getRowColour(t.row) == T_WHITE && t.column == getRowSize(t.row)-1) {
 				return T_WHITE;
 			}
-			auto adjacents = getAdjacentPoints(t.row, t.column);
+			std::vector<Move> adjacents(8);
+			getAdjacentPoints(t.row, t.column, adjacents);
 			for(Move& m : adjacents) {
 				if(getColour(m.row, m.column) != T_WHITE) { continue; }
 				if(std::find(open.begin(), open.end(), m) != open.end()) { continue; }
@@ -404,10 +398,11 @@ TokenColour GameBoard::getAcrossBoardWinner() const
 		while(!open.empty()) {
 			Move& t = open.front();
 			closed.push_back(t);
-			if(t.row == _rows.size()-2) {
+			if(t.row == getBoardLength()-2) {
 				return T_RED;
 			}
-			auto adjacents = getAdjacentPoints(t.row, t.column);
+			std::vector<Move> adjacents(8);
+			getAdjacentPoints(t.row, t.column, adjacents);
 			for(Move& m : adjacents) {
 				if(getColour(m.row, m.column) != T_RED) { continue; }
 				if(std::find(open.begin(), open.end(), m) != open.end()) { continue; }
@@ -437,8 +432,9 @@ TokenColour GameBoard::getBoxInWinner() const
 		for(BoardIndex c = 0; c < getRowSize(r); ++c) {
 			TokenColour lc = getColour(r ,c);
 			if(lc != T_EMPTY) {
-				auto adj = getAdjacentPoints(r, c);
-				for(auto& a : adj) {
+				std::vector<Move> adjacents(8);
+				getAdjacentPoints(r, c, adjacents);
+				for(auto& a : adjacents) {
 					if(getColour(a.row, a.column) != lc) continue;
 					if (hasReturnPath(a, {r,c}, {r,c}, {})) {
 						return lc;
@@ -487,8 +483,9 @@ bool GameBoard::hasReturnPath(const Move &point, const Move &source, const Move 
 	if(std::find(history.begin(), history.end(), point)  != history.end()) return true;
 	history.push_back(source);
 	auto lc = getColour(point.row, point.column);
-	auto adj = getAdjacentPoints(point.row, point.column);
-	for(auto& a : adj) {
+	std::vector<Move> adjacents(8);
+	getAdjacentPoints(point.row, point.column, adjacents);
+	for(auto& a : adjacents) {
 		if(getColour(a.row, a.column) != lc) continue;
 		if(! canFollowPath(source, point, a)) {
 			continue;

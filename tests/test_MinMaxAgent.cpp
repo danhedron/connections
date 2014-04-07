@@ -22,14 +22,20 @@ BOOST_AUTO_TEST_CASE(MinMaxTest)
 	MinMaxAgent redagent(T_RED, board.getRunSize()/2);
 	MinMaxAgent whiteagent(T_WHITE, board.getRunSize()/2);
 
+	BOOST_CHECKPOINT("PREFLIGHT CHECK");
+
 	for(int i = 0; ! board.isEndGame(); ++i) {
 		if(i%2==0) {
+			BOOST_CHECKPOINT("RED MOVE " << i);
 			Move mr = redagent.calculateMove(board);
+			BOOST_CHECKPOINT("RED MOVED " << i);
 			board.putToken(mr.row, mr.column, T_RED);
 			//print_board(board);
 		}
 		else {
+			BOOST_CHECKPOINT("WHITE MOVE " << i);
 			Move mw = whiteagent.calculateMove(board);
+			BOOST_CHECKPOINT("WHITE MOVED " << i);
 			board.putToken(mw.row, mw.column, T_WHITE);
 			// print_board(board);
 		}

@@ -57,39 +57,27 @@ template<unsigned int T> struct BoardHashImpl {
  *
  */
 
-class BoardRow
+/*class BoardRow
 {
 	std::vector<TokenColour> tokens;
 	TokenColour rowColour;
 public:
 	BoardRow(TokenColour colour, BoardIndex length);
 
-	/**
-	 * Put a token into this row
-	 */
 	void putToken(BoardIndex i, TokenColour colour);
 
-	/**
-	 * Returns the token in the row at the given index
-	 */
 	TokenColour getColour(BoardIndex i) const;
 
-	/**
-	 * Returns the orientation in the row at the given index
-	 */
 	TokenOrientation getOrientation(BoardIndex i) const;
 
-	/**
-	 * Returns the colour of the token at the given index.
-	 */
 	TokenColour operator[](BoardIndex i) const {
 		return tokens[i];
 	}
-};
+};*/
 
 class GameBoard
 {
-	std::vector<BoardRow> _rows;
+	std::vector<TokenColour> _tokens;
 	BoardIndex _colourLenths[3];
 	BoardIndex _length;
 public:
@@ -103,7 +91,8 @@ public:
 
 	TokenColour getColour(BoardIndex row, BoardIndex i) const;
 
-	const BoardRow& operator[](BoardIndex r) const { return _rows[r]; }
+	TokenColour& operator()(BoardIndex r, BoardIndex c);
+	const TokenColour& operator()(BoardIndex r, BoardIndex c) const;
 
 	TokenOrientation getOrientation(BoardIndex row, BoardIndex i) const;
 
@@ -117,9 +106,9 @@ public:
 
 	BoardIndex getBoardLength() const;
 
-	std::vector<Move> getAdjacentPoints(BoardIndex r, BoardIndex c) const;
+	void getAdjacentPoints(BoardIndex r, BoardIndex c, std::vector<Move>& points) const;
 
-	std::vector<Move> getAdjacentPoints(BoardIndex r, BoardIndex c, TokenColour tc) const;
+	void getAdjacentPoints(BoardIndex r, BoardIndex c, TokenColour tc, std::vector<Move>& points) const;
 
 	void makeMove(const Move& m);
 

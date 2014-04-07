@@ -40,7 +40,8 @@ float MinMaxAgent::eval(const GameBoard &b)
 			if(b.getRowColour(t.row) == T_WHITE) {
 				whitescore = std::max(whitescore, (float)t.row);
 			}
-			auto adjacents = b.getAdjacentPoints(t.row, t.column);
+			std::vector<Move> adjacents(8);
+			b.getAdjacentPoints(t.row, t.column, adjacents);
 			for(Move& m : adjacents) {
 				if(b.getColour(m.row, m.column) != T_WHITE) { continue; }
 				if(std::find(open.begin(), open.end(), m) != open.end()) { continue; }
@@ -61,7 +62,8 @@ float MinMaxAgent::eval(const GameBoard &b)
 			if(t.row == b.getBoardLength()-2) {
 				whitescore = std::max(whitescore, t.column/2.f);
 			}
-			auto adjacents = b.getAdjacentPoints(t.row, t.column);
+			std::vector<Move> adjacents(8);
+			b.getAdjacentPoints(t.row, t.column, adjacents);
 			for(Move& m : adjacents) {
 				if(b.getColour(m.row, m.column) != T_RED) { continue; }
 				if(std::find(open.begin(), open.end(), m) != open.end()) { continue; }
@@ -140,7 +142,7 @@ float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool p
 		statescore = utility(board);
 		scoremode = 'T';
 	}
-	else if(false && d > maxDepth) {
+	else if(d > maxDepth) {
 		statescore = eval(board);
 		scoremode = 'E';
 	}
