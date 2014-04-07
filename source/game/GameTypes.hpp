@@ -2,12 +2,19 @@
 #ifndef _GAMETYPES_HPP_
 #define _GAMETYPES_HPP_
 
-typedef unsigned int BoardIndex;
+typedef unsigned char BoardIndex;
 
 struct Move
 {
-	unsigned int row;
-	unsigned int column;
+	BoardIndex row;
+	BoardIndex column;
+
+	Move(BoardIndex r, BoardIndex c)
+		: row(r), column(c) {}
+
+	Move()
+		: row(0), column(0) {}
+
 	bool operator==(const Move& r) const {
 		return row == r.row && column == r.column;
 	}

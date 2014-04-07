@@ -57,29 +57,12 @@ template<unsigned int T> struct BoardHashImpl {
  *
  */
 
-/*class BoardRow
-{
-	std::vector<TokenColour> tokens;
-	TokenColour rowColour;
-public:
-	BoardRow(TokenColour colour, BoardIndex length);
-
-	void putToken(BoardIndex i, TokenColour colour);
-
-	TokenColour getColour(BoardIndex i) const;
-
-	TokenOrientation getOrientation(BoardIndex i) const;
-
-	TokenColour operator[](BoardIndex i) const {
-		return tokens[i];
-	}
-};*/
-
 class GameBoard
 {
 	std::vector<TokenColour> _tokens;
 	BoardIndex _colourLenths[3];
 	BoardIndex _length;
+	BoardIndex _moves;
 public:
 
 	typedef BoardHashImpl<4> Hash;
