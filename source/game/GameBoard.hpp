@@ -6,6 +6,27 @@
 #include <string>
 
 /**
+  Board hash structure (due to the insane state size..)
+*/
+template<unsigned int T> struct BoardHashImpl {
+	unsigned int data[T] = {};
+
+	bool operator< (const BoardHashImpl<T> &rhs) const {
+		for(int i = T-1; i >= 0; --i) {
+			if(data[i] < rhs.data[i]) return true;
+		}
+		return false;
+	}
+
+	bool operator== (const BoardHashImpl<T> &rhs) const {
+		for(int i = 0; i < T; ++i) {
+			if(data[i] != rhs.data[i]) return false;
+		}
+		return true;
+	}
+};
+
+/**
  * Rough notes on grid layout
  *
  * Token states :=
@@ -71,6 +92,9 @@ class GameBoard
 	BoardIndex _colourLenths[3];
 	BoardIndex _length;
 public:
+
+	typedef BoardHashImpl<4> Hash;
+
 	GameBoard(BoardIndex length);
 	GameBoard(BoardIndex length, const std::string& data);
 
@@ -122,7 +146,6 @@ public:
 
 	std::string toString(const std::string& prefix = "", bool colour = true) const;
 
-	typedef std::string Hash;
 	Hash encodeHash(bool normalize = false) const;
 
 	std::string encodeString() const;

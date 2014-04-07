@@ -326,7 +326,24 @@ std::string GameBoard::toString(const std::string &prefix, bool colour) const
 GameBoard::Hash GameBoard::encodeHash(bool normalize) const
 {
 	if(! normalize) {
-		return encodeString();
+		Hash h;
+
+		int i = 0;
+		static int magic = sizeof(unsigned int);
+		for(BoardIndex r = 0; r < getBoardLength(); ++r) {
+			for(BoardIndex c = 0; c < getRowSize(r); ++c) {
+				int byte = (i/magic);
+				int val = 0;
+				if(getColour(r, c) == T_RED) {
+					val	= 1;
+				} else if(getColour(r,c) == T_WHITE) {
+					val	= 2;
+				}
+				h.data[byte] |= (val << (i%magic));
+			}
+		}
+
+		return h;
 	}
 
 	// find the board symmetry with the lowest value, and return that.
@@ -335,7 +352,7 @@ GameBoard::Hash GameBoard::encodeHash(bool normalize) const
 		if(sb < b) b = sb;
 	}
 
-	return b.encodeString();
+	return b.encodeHash(false);
 }
 
 std::string GameBoard::encodeString() const

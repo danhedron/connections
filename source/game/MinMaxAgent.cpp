@@ -27,7 +27,7 @@ float MinMaxAgent::utility(const GameBoard& board)
 
 float MinMaxAgent::eval(const GameBoard &b)
 {
-	return colour() == T_RED ? -50.f : 50.f;
+	return 0.f; //colour() == T_RED ? -50.f : 50.f;
 }
 
 float MinMaxAgent::minValue(const GameBoard& oldboard, const Move& move, unsigned int d)
