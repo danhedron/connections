@@ -8,7 +8,7 @@ BOOST_AUTO_TEST_SUITE(MinMaxAgentTests)
 
 BOOST_AUTO_TEST_CASE(MinMaxTest)
 {
-	GameBoard board(5);
+	GameBoard board(3);
 	//    board.putToken(1,0, T_RED);
 	//    board.putToken(0,0, T_RED);
 	//    board.putToken(6,1, T_RED);

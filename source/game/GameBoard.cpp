@@ -136,8 +136,6 @@ bool GameBoard::isEndGame(WinType *wt) const
 
 TokenColour GameBoard::getWinner(WinType *wt) const
 {
-	if(_moves < 7) return T_EMPTY;
-
 	TokenColour ab = getAcrossBoardWinner();
 	if(ab != T_EMPTY) {
 		if(wt != nullptr) *wt = WT_CONNECTION;

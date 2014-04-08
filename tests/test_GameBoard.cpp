@@ -276,7 +276,7 @@ BOOST_AUTO_TEST_CASE(Board_Test_Adjacent)
 	GameBoard board(5);
 
 	{
-		std::vector<Move> adjacent(8);
+		std::vector<Move> adjacent; adjacent.reserve(6);
 		board.getAdjacentPoints(0, 1, T_RED, adjacent);
 		BOOST_CHECK(std::find(std::begin(adjacent), std::end(adjacent), Move{0, 2}) != adjacent.end());
 		BOOST_CHECK(std::find(std::begin(adjacent), std::end(adjacent), Move{1, 0}) != adjacent.end());
@@ -284,7 +284,7 @@ BOOST_AUTO_TEST_CASE(Board_Test_Adjacent)
 		BOOST_CHECK(std::find(std::begin(adjacent), std::end(adjacent), Move{0, 0}) == adjacent.end());
 	}
 	{
-		std::vector<Move> adjacent(8);
+		std::vector<Move> adjacent; adjacent.reserve(6);
 		board.getAdjacentPoints(0, 4, T_RED, adjacent);
 		BOOST_CHECK(std::find(std::begin(adjacent), std::end(adjacent), Move{0, 3}) != adjacent.end());
 		BOOST_CHECK(std::find(std::begin(adjacent), std::end(adjacent), Move{1, 4}) != adjacent.end());
@@ -292,20 +292,20 @@ BOOST_AUTO_TEST_CASE(Board_Test_Adjacent)
 		BOOST_CHECK(std::find(std::begin(adjacent), std::end(adjacent), Move{0, 5}) == adjacent.end());
 	}
 	{
-		std::vector<Move> adjacent(8);
+		std::vector<Move> adjacent; adjacent.reserve(6);
 		board.getAdjacentPoints(1, 0, T_RED, adjacent);
 		BOOST_CHECK(std::find(std::begin(adjacent), std::end(adjacent), Move{0, 1}) != adjacent.end());
 		BOOST_CHECK(std::find(std::begin(adjacent), std::end(adjacent), Move{2, 1}) != adjacent.end());
 	}
 	{
-		std::vector<Move> adjacent(8);
+		std::vector<Move> adjacent; adjacent.reserve(6);
 		board.getAdjacentPoints(1, 0, T_WHITE, adjacent);
 		BOOST_CHECK(std::find(std::begin(adjacent), std::end(adjacent), Move{1, 1}) != adjacent.end());
 		BOOST_CHECK(std::find(std::begin(adjacent), std::end(adjacent), Move{2, 0}) != adjacent.end());
 		BOOST_CHECK(std::find(std::begin(adjacent), std::end(adjacent), Move{1, 1}) != adjacent.end());
 	}
 	{
-		std::vector<Move> adjacent(8);
+		std::vector<Move> adjacent; adjacent.reserve(6);
 		board.getAdjacentPoints(1, 4, T_WHITE, adjacent);
 		BOOST_CHECK(std::find(std::begin(adjacent), std::end(adjacent), Move{1, 3}) != adjacent.end());
 		BOOST_CHECK(std::find(std::begin(adjacent), std::end(adjacent), Move{0, 4}) != adjacent.end());
@@ -314,7 +314,7 @@ BOOST_AUTO_TEST_CASE(Board_Test_Adjacent)
 		BOOST_CHECK(std::find(std::begin(adjacent), std::end(adjacent), Move{2, 4}) != adjacent.end());
 	}
 	{
-		std::vector<Move> adjacent(8);
+		std::vector<Move> adjacent; adjacent.reserve(6);
 		board.getAdjacentPoints(2, 4, T_RED, adjacent);
 		BOOST_CHECK(std::find(std::begin(adjacent), std::end(adjacent), Move{2, 3}) != adjacent.end());
 		BOOST_CHECK(std::find(std::begin(adjacent), std::end(adjacent), Move{3, 4}) != adjacent.end());
