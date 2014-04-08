@@ -40,7 +40,7 @@ float MinMaxAgent::eval(const GameBoard &b)
 			if(b.getRowColour(t.row) == T_WHITE) {
 				whitescore = std::max(whitescore, (float)t.row);
 			}
-			std::vector<Move> adjacents(8);
+			std::vector<Move> adjacents; adjacents.reserve(6);
 			b.getAdjacentPoints(t.row, t.column, adjacents);
 			for(Move& m : adjacents) {
 				if(b.getColour(m.row, m.column) != T_WHITE) { continue; }
@@ -62,7 +62,7 @@ float MinMaxAgent::eval(const GameBoard &b)
 			if(t.row == b.getBoardLength()-2) {
 				whitescore = std::max(whitescore, t.column/2.f);
 			}
-			std::vector<Move> adjacents(8);
+			std::vector<Move> adjacents; adjacents.reserve(6);
 			b.getAdjacentPoints(t.row, t.column, adjacents);
 			for(Move& m : adjacents) {
 				if(b.getColour(m.row, m.column) != T_RED) { continue; }

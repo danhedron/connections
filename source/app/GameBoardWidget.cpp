@@ -30,6 +30,12 @@ QTransform GameBoardWidget::calculateBoardTransform(const GameBoard* board, QPai
 	return tScale * tOffset;
 }
 
+GameBoardWidget::GameBoardWidget(QWidget *parent)
+	: QWidget(parent), board(nullptr)
+{
+
+}
+
 void GameBoardWidget::paintEvent(QPaintEvent*)
 {
 	QPainter p(this);
@@ -84,7 +90,7 @@ void GameBoardWidget::paintBoard(const GameBoard *board, QPainter &p)
 	if(board == nullptr) return;
 
 	for(size_t r = 0; r < board->getBoardLength(); ++r) {
-		for(size_t c = 0; c < board->getRowSize(r) + 1; ++c) {
+		for(size_t c = 0; c < board->getRowSize(r) + 1u; ++c) {
 			QPointF t = calculateTilePosition(board, r, c);
 			p.setTransform(btr);
 			p.setTransform(QTransform::fromTranslate(t.x(), t.y()), true);
