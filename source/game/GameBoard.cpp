@@ -32,39 +32,26 @@ GameBoard::GameBoard(BoardIndex length, const std::string &data)
 	}
 }
 
-int calculateIndex(const GameBoard& b, int row, int column)
-{
-	if(b.getRowColour(row) == T_WHITE) {
-		size_t redRows = std::ceil(row/2)+1;
-		size_t whiteRows = std::ceil(row/2);
-		return redRows * b.getRowSize(0) + whiteRows * b.getRowSize(1) + column;
-	} else {
-		size_t redRows = std::ceil(row/2);
-		size_t whiteRows = std::ceil(row/2);
-		return redRows * b.getRowSize(0) + whiteRows * b.getRowSize(1) + column;
-	}
-}
-
 void GameBoard::putToken(BoardIndex row, BoardIndex i, TokenColour t)
 {
 	assert(row < getBoardLength());
-	_tokens[calculateIndex(*this, row, i)] = t;
+	_tokens[calculateIndex(row, i)] = t;
 }
 
 TokenColour GameBoard::getColour(BoardIndex row, BoardIndex i) const
 {
 	assert(row < getBoardLength());
-	return _tokens[calculateIndex(*this, row, i)];
+	return _tokens[calculateIndex(row, i)];
 }
 
 TokenColour &GameBoard::operator()(BoardIndex r, BoardIndex c)
 {
-	return _tokens[calculateIndex(*this, r, c)];
+	return _tokens[calculateIndex(r, c)];
 }
 
 const TokenColour &GameBoard::operator()(BoardIndex r, BoardIndex c) const
 {
-	return _tokens[calculateIndex(*this, r, c)];
+	return _tokens[calculateIndex(r, c)];
 }
 
 TokenOrientation GameBoard::getOrientation(BoardIndex row, BoardIndex i) const

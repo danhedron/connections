@@ -5,6 +5,7 @@
 #include "GameTypes.hpp"
 #include <string>
 #include <iostream>
+#include <algorithm>
 
 /**
   Board hash structure (due to the insane state size..)
@@ -143,6 +144,23 @@ public:
 private:
 	TokenColour getAcrossBoardWinner() const;
 	TokenColour getBoxInWinner() const;
+
+	int calculateIndex(int row, int column) const
+	{
+		switch(getRowColour(row)) {
+		case T_WHITE: {
+			size_t redRows = std::ceil(row/2)+1;
+			size_t whiteRows = std::ceil(row/2);
+			return redRows * getRowSize(0) + whiteRows * getRowSize(1) + column;
+		}
+		case T_RED: {
+			size_t redRows = std::ceil(row/2);
+			size_t whiteRows = std::ceil(row/2);
+			return redRows * getRowSize(0) + whiteRows * getRowSize(1) + column;
+		}
+		default: return 0;
+		};
+	}
 public:
 	bool canFollowPath(const Move& source, const Move& point, const Move& exit) const;
 	bool hasReturnPath(const Move& point, const Move& source, const Move& target, std::vector<Move> history) const;
