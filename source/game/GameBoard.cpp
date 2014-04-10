@@ -2,8 +2,24 @@
 #include <iostream>
 #include <algorithm>
 #include <cassert>
+#include <array>
 #include <list>
 #include <sstream>
+
+/* Symmetries of the game board */
+struct LookupOffset {
+	BoardIndex baseRow;
+	int rowScale;
+	BoardIndex baseCol;
+	int colScale;
+};
+
+std::array<LookupOffset, BOARD_SYMETRIES> gBoardSymmetries{ {
+	{1, -1, 0, 1},
+	{1, -1, 1, -1},
+	{0, 1, 1, -1}
+} };
+
 
 GameBoard::GameBoard(BoardIndex length)
 	: _length(length), _moves(0)
@@ -186,12 +202,15 @@ std::vector<GameBoard> GameBoard::getSymmetries() const
 	std::vector<GameBoard> syms;
 	syms.reserve(5);
 
+	// Modify this to return the symmetry geometric modifiers?
+	//   { basis row, scale row, basis column, scale column }
+
 	// Swap H
 	{
 		GameBoard b(getRunSize());
 		for(size_t r = 0; r < getBoardLength(); ++r) {
 			for(size_t c = 0; c < getRowSize(r); ++c) {
-				auto T = getColour(r, c);
+				auto T = _tokens[calculateIndex(r,c)];
 				if(T != T_EMPTY) {
 					b.putToken(r, getRowSize(r) - 1 - c, T);
 				}
@@ -204,7 +223,7 @@ std::vector<GameBoard> GameBoard::getSymmetries() const
 		GameBoard b(getRunSize());
 		for(size_t r = 0; r < getBoardLength(); ++r) {
 			for(size_t c = 0; c < getRowSize(r); ++c) {
-				auto T = getColour(r, c);
+				auto T = _tokens[calculateIndex(r,c)];
 				if(T != T_EMPTY) {
 					b.putToken(getBoardLength() - 1 - r, c, T);
 				}
@@ -218,7 +237,7 @@ std::vector<GameBoard> GameBoard::getSymmetries() const
 		GameBoard b(getRunSize());
 		for(size_t r = 0; r < getBoardLength(); ++r) {
 			for(size_t c = 0; c < getRowSize(r); ++c) {
-				auto T = getColour(r, c);
+				auto T = _tokens[calculateIndex(r,c)];
 				if(T != T_EMPTY) {
 					b.putToken(getBoardLength() - 1 - r,
 							   getRowSize(r) - 1 - c, T);
@@ -267,11 +286,7 @@ GameBoard::Hash GameBoard::encodeHash(bool normalize) const
 		for(BoardIndex r = 0; r < getBoardLength(); ++r) {
 			for(BoardIndex c = 0; c < getRowSize(r); ++c) {
 				int byte = (i/magic);
-				if((*this)(r,c) == T_RED) {
-					h.data[byte] |= (1 << (i%magic));
-				} else if((*this)(r,c) == T_WHITE) {
-					h.data[byte] |= (2 << (i%magic));
-				}
+				h.data[byte] |= ( _tokens[calculateIndex(r,c)] << (i%magic));
 				i+=2;
 			}
 		}
@@ -279,13 +294,31 @@ GameBoard::Hash GameBoard::encodeHash(bool normalize) const
 		return h;
 	}
 
-	// find the board symmetry with the lowest value, and return that.
-	GameBoard b = *this;
-	for(auto sb : getSymmetries()) {
-		if(sb < b) b = sb;
+	// find the board symmetry with the lowest value
+	Hash hs = encodeHash(false);
+
+	// Find symmetry with the smallest hash.
+	for(auto& tr : gBoardSymmetries) {
+		Hash h;
+
+		int i = 0;
+		static int magic = sizeof(unsigned int)*8;
+		for(BoardIndex r = 0; r < getBoardLength(); ++r) {
+			BoardIndex rr = tr.baseRow*(getBoardLength()-1) + (r * tr.rowScale);
+			for(BoardIndex c = 0; c < getRowSize(r); ++c) {
+				BoardIndex cr = tr.baseCol*(getRowSize(r)-1) + (c * tr.colScale);
+				int byte = (i/magic);
+				h.data[byte] |= ( _tokens[calculateIndex(rr,cr)] << (i%magic));
+				i+=2;
+			}
+		}
+
+		if(h < hs) {
+			hs = h;
+		}
 	}
 
-	return b.encodeHash(false);
+	return hs;
 }
 
 std::string GameBoard::encodeString() const
@@ -371,7 +404,7 @@ TokenColour GameBoard::getBoxInWinner() const
 
 	for(BoardIndex r = 0; r < getBoardLength(); ++r) {
 		for(BoardIndex c = 0; c < getRowSize(r); ++c) {
-			TokenColour lc = getColour(r ,c);
+			TokenColour lc = _tokens[calculateIndex(r,c)];
 			if(lc != T_EMPTY) {
 				std::vector<Move> adjacents; adjacents.reserve(6);
 				getAdjacentPoints(r, c, adjacents);

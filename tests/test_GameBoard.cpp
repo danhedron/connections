@@ -402,15 +402,13 @@ BOOST_AUTO_TEST_CASE(Board_Hash_test)
 		GameBoard::Hash h1 = b1.encodeHash(true);
 		GameBoard::Hash h2 = b2.encodeHash(true);
 
-		std::cout << h1 << " " << h2 <<  std::endl;
-
 		BOOST_CHECK( (h1 == h2) == false );
 	}
 }
 
 BOOST_AUTO_TEST_CASE(Board_Symmetry_test)
 {
-	{
+	/*{
 		GameBoard b1(5);
 		GameBoard b2(5);
 
@@ -427,23 +425,48 @@ BOOST_AUTO_TEST_CASE(Board_Symmetry_test)
 		b2.putToken(9, 0, T_RED);
 
 		BOOST_CHECK( b1 < b2 );
+	}*/
+	{
+		GameBoard::Hash h1;
+		h1.data[0] = 1;
+		GameBoard::Hash h2;
+		h2.data[0] = 2;
+		GameBoard::Hash h3;
+		h3.data[1] = 1;
+
+		BOOST_CHECK( h1 < h2 );
+		BOOST_CHECK( h1 < h3 );
 	}
 	{
 		GameBoard b1(5);
 		GameBoard b2(5);
+		GameBoard b3(5);
+		GameBoard b4(5);
 
 		b1.putToken(1, 0, T_RED);
 		b2.putToken(1, 4, T_RED);
+		b3.putToken(9, 0, T_RED);
+		b4.putToken(9, 4, T_RED);
+
+		GameBoard::Hash nh1 = b1.encodeHash(false);
+		GameBoard::Hash nh2 = b2.encodeHash(false);
+
+		BOOST_CHECK( nh1 < nh2 );
 
 		GameBoard::Hash h1 = b1.encodeHash(true);
 		GameBoard::Hash h2 = b2.encodeHash(true);
-		GameBoard::Hash h3 = b2.encodeHash(false);
 
 		BOOST_CHECK(h1 == h2);
+
+		GameBoard::Hash h3 = b3.encodeHash(true);
+		GameBoard::Hash h4 = b4.encodeHash(true);
+
+		BOOST_CHECK(h1 == h3);
+		BOOST_CHECK(h3 == h4);
 		BOOST_CHECK((h1 < h2) == false);
-		BOOST_CHECK((h1 == h3) == false);
+		BOOST_CHECK((h1 < h3) == false);
 	}
-	{
+	/*{
 		GameBoard b1(5);
 		GameBoard b2(5);
 
@@ -455,7 +478,7 @@ BOOST_AUTO_TEST_CASE(Board_Symmetry_test)
 
 		BOOST_CHECK(h1 == h2);
 		BOOST_CHECK((h1 < h2) == false);
-	}
+	}*/
 }
 
 BOOST_AUTO_TEST_SUITE_END()

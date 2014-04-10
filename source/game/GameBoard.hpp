@@ -7,6 +7,8 @@
 #include <iostream>
 #include <algorithm>
 
+#define BOARD_SYMETRIES 3
+
 /**
   Board hash structure (due to the insane state size..)
 */
@@ -15,6 +17,7 @@ template<unsigned int T> struct BoardHashImpl {
 
 	bool operator< (const BoardHashImpl<T> &rhs) const {
 		for(int i = T-1; i >= 0; --i) {
+			if(data[i] > rhs.data[i]) return false;
 			if(data[i] < rhs.data[i]) return true;
 		}
 		return false;
