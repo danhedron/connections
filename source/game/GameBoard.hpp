@@ -159,6 +159,8 @@ public:
 
 	std::string encodeString() const;
 
+	unsigned int getNumberOfMoves() const { return _moves; }
+
 private:
 	TokenColour getAcrossBoardWinner() const;
 	TokenColour getBoxInWinner() const;

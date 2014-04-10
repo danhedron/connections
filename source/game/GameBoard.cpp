@@ -26,7 +26,7 @@ GameBoard::GameBoard(BoardIndex length, const std::string &data)
 		for(size_t c = 0; c < getRowSize(r); ++c) {
 			char t = data.at(i++);
 			if(t != '_') {
-				putToken(r, c, t == 'R' ? T_RED : T_WHITE);
+				_tokens[calculateIndex(r,c)] = t == 'R' ? T_RED : T_WHITE;
 			}
 		}
 	}
@@ -35,6 +35,7 @@ GameBoard::GameBoard(BoardIndex length, const std::string &data)
 void GameBoard::putToken(BoardIndex row, BoardIndex i, TokenColour t)
 {
 	assert(row < getBoardLength());
+	_moves++;
 	_tokens[calculateIndex(row, i)] = t;
 }
 

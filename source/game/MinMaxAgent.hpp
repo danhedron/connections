@@ -49,7 +49,7 @@ class MinMaxAgent : public Agent
 	unsigned int tally;
 	unsigned int cacheHits;
 
-	unsigned int maxDepth;
+	unsigned int _maxDepth;
 
 	std::random_device rdevice;
 	std::default_random_engine rengine;
@@ -62,13 +62,15 @@ class MinMaxAgent : public Agent
 
 	float maxValue(const GameBoard& board, const Move& move, unsigned int d);
 
+	unsigned int maxDepth() const { return _maxDepth; }
+
 	float value(const GameBoard& board, const GameBoard &parent, bool player, float alpha, float beta, unsigned int d);
 
 	std::map<GameBoard::Hash, float> _scorecache;
 
 public:
 
-	MinMaxAgent(TokenColour player, unsigned int maxDepth);
+	MinMaxAgent(TokenColour player, unsigned int _maxDepth);
 
 	Move calculateMove(const GameBoard& board);
 };

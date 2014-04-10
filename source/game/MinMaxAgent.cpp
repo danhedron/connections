@@ -8,7 +8,8 @@
 #include <chrono>
 
 MinMaxAgent::MinMaxAgent(TokenColour player, unsigned int maxDepth)
-	: Agent(player), tally(0), cacheHits(0), maxDepth(maxDepth), rengine(rdevice())
+	: Agent(player), tally(0), cacheHits(0), _maxDepth(maxDepth),
+	  rengine(rdevice())
 {
 
 }
@@ -119,9 +120,11 @@ float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool p
 		std::chrono::duration<float> elapsed = now - startClock;
 
 		std::cout << tally << " states / " << cacheHits << " cacheH / "
+				  << (tally/elapsed.count()) << " states/s / "
+				  << maxDepth() << " / "
 				  << (100.f*cacheHits)/tally << "% / "
-				  << (100.f*wcachehits)/tbuff << "% / "
-				  << (tally/elapsed.count()) << " states/s" << std::endl;
+				  << (100.f*wcachehits)/tbuff << "% "
+				  << std::endl;
 
 		tbuff = tally;
 		wcachehits = 0;
@@ -132,7 +135,6 @@ float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool p
 	char scoremode = ' ';
 
 	auto it = _scorecache.find(board.encodeHash(true));
-
 	if(it != _scorecache.end()) {
 		scoremode = 'C';
 		statescore = it->second;
@@ -142,7 +144,7 @@ float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool p
 		statescore = utility(board);
 		scoremode = 'T';
 	}
-	else if(d > maxDepth) {
+	else if(d > maxDepth()) {
 		statescore = eval(board);
 		scoremode = 'E';
 	}
@@ -176,7 +178,7 @@ float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool p
 
 Move MinMaxAgent::calculateMove(const GameBoard& board)
 {
-	tally = 0;
+	tally = 0; tbuff = 0;
 	cacheHits = 0;
 	_scorecache.clear();
 	startClock = std::chrono::system_clock::now();
