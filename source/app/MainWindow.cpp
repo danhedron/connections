@@ -187,7 +187,7 @@ void MainWindow::resetGame()
 	}
 
 	int thinksize = gb->getRunSize()*4;
-	if(boardSize > 4) thinksize = gb->getRunSize()-1;
+	if(boardSize > 4) thinksize = 4;
 
 	whitePlayerAgent = new MinMaxAgent(T_WHITE, thinksize);
 

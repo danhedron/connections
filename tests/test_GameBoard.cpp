@@ -404,6 +404,41 @@ BOOST_AUTO_TEST_CASE(Board_Hash_test)
 
 		BOOST_CHECK( (h1 == h2) == false );
 	}
+	{
+		// Test 250 random boards for symmetry
+		std::vector<GameBoard> boards;
+		boards.reserve(250);
+
+		std::random_device rd;
+		std::default_random_engine reng(rd());
+		std::uniform_int_distribution<int> dist(0,2);
+
+		for(int i = 0; i < 250; ++i) {
+			GameBoard b(2);
+			for(BoardIndex r = 0; r < b.getBoardLength(); ++r) {
+				for(BoardIndex c = 0; c < b.getRowSize(r); ++c) {
+					auto T = (TokenColour)dist(reng);
+					if(T != T_EMPTY && b.isValidMove(T, r, c)) {
+						b.putToken(r, c, T);
+					}
+				}
+			}
+			boards.push_back(b);
+		}
+
+		int syms = 0;
+		for(const GameBoard& b0 : boards) {
+			for(const GameBoard& b1 : boards) {
+				if(b0.encodeHash() == b1.encodeHash()) continue;
+
+				if(b0.encodeHash(true) == b1.encodeHash(true)) {
+					syms++;
+				}
+			}
+		}
+
+		BOOST_CHECK(syms > 0);
+	}
 }
 
 BOOST_AUTO_TEST_CASE(Board_Symmetry_test)
