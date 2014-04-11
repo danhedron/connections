@@ -186,8 +186,9 @@ void MainWindow::resetGame()
 		delete redPlayerAgent;
 	}
 
-	int thinksize = gb->getRunSize()*4;
-	if(boardSize > 4) thinksize = 4;
+	int thinksize = 0;
+	if(boardSize <= 3) thinksize = 5;
+	if(boardSize >= 4) thinksize = 4;
 
 	whitePlayerAgent = new MinMaxAgent(T_WHITE, thinksize);
 
