@@ -72,6 +72,8 @@ public:
 
 	MinMaxAgent(TokenColour player, unsigned int _maxDepth);
 
+	virtual ~MinMaxAgent() {}
+
 	Move calculateMove(const GameBoard& board);
 };
 

@@ -8,6 +8,7 @@
 
 class GameBoardWidget;
 class Agent;
+class AIPlayerWorker;
 class MoveResult;
 
 class MainWindow : public QMainWindow
@@ -34,6 +35,8 @@ class MainWindow : public QMainWindow
 
 	std::vector<GameBoard> history;
 
+	AIPlayerWorker* currentWorker;
+
 public:
 
 	MainWindow(QWidget* parent = 0, Qt::WindowFlags flags = 0);
@@ -45,7 +48,7 @@ public:
 public slots:
 
 	void makeMove(BoardIndex row, BoardIndex column);
-	void makeMove(MoveResult*);
+	void makeMove(BoardIndex row, BoardIndex column, TokenColour tc);
 
 private slots:
 

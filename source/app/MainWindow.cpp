@@ -14,14 +14,16 @@
 void MainWindow::queueAIMove(Agent *agent, TokenColour tc)
 {
 	setCurrentPlayer(tc);
-	AIPlayerWorker* worker = new AIPlayerWorker(agent);
-	connect(worker, SIGNAL(moveDecided(MoveResult*)), this, SLOT(makeMove(MoveResult*)));
-	worker->startMove( gbw->gameBoard());
+	if(currentWorker) delete currentWorker;
+	currentWorker = new AIPlayerWorker(agent);
+	connect(currentWorker, SIGNAL(moveDecided(BoardIndex,BoardIndex,TokenColour)), this, SLOT(makeMove(BoardIndex,BoardIndex,TokenColour)));
+	currentWorker->startMove( gbw->gameBoard());
 }
 
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 	: QMainWindow(parent, flags), gbw(nullptr), boardSize(5), redai(false),
-	  redPlayerAgent(nullptr), whitePlayerAgent(nullptr), startBoard(5)
+	  redPlayerAgent(nullptr), whitePlayerAgent(nullptr), startBoard(5),
+	  currentWorker(nullptr)
 {
 	setMinimumSize(300, 300);
 
@@ -105,10 +107,10 @@ void MainWindow::makeMove(BoardIndex row, BoardIndex column)
 	}
 }
 
-void MainWindow::makeMove(MoveResult *m)
+void MainWindow::makeMove(BoardIndex row, BoardIndex column, TokenColour tc)
 {
-	if(m->player() == currentTurn) {
-		makeMove(m->move().row, m->move().column);
+	if(tc == currentTurn) {
+		makeMove(row, column);
 	}
 }
 

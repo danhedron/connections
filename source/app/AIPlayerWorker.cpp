@@ -1,22 +1,27 @@
 #include "AIPlayerWorker.hpp"
 
+Q_DECLARE_METATYPE(BoardIndex)
+Q_DECLARE_METATYPE(TokenColour)
+
 AIPlayerWorker::AIPlayerWorker(Agent* agent)
-	: agent(agent)
+	: _agent(agent)
 {
-	this->moveToThread(&workerThread);
+
+	qRegisterMetaType<BoardIndex>("BoardIndex");
+	qRegisterMetaType<TokenColour>("TokenColour");
+
+	start();
+	moveToThread(this);
 }
 
-void AIPlayerWorker::startMove(GameBoard* gbw)
+void AIPlayerWorker::startMove(GameBoard* board)
 {
-	this->moveToThread(&workerThread);
-	connect(&workerThread, SIGNAL(finished()), this, SLOT(deleteLater()));
-	connect(&workerThread, SIGNAL(started()), this, SLOT(decideNextMove()));
-	gameBoard = gbw;
-	workerThread.start();
+	_board = board;
+	QMetaObject::invokeMethod(this, "decideNextMove");
 }
 
 void AIPlayerWorker::decideNextMove()
 {
-	Move m = agent->calculateMove(*gameBoard);
-	emit moveDecided(new MoveResult(m, agent->colour(), this));
+	Move m = _agent->calculateMove(*_board);
+	emit moveDecided(m.row, m.column, _agent->colour());
 }

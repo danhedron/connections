@@ -180,7 +180,6 @@ Move MinMaxAgent::calculateMove(const GameBoard& board)
 {
 	tally = 0; tbuff = 0;
 	cacheHits = 0;
-	_scorecache.clear();
 	startClock = std::chrono::system_clock::now();
 
 	auto moves = board.availableMoves(colour());
@@ -207,5 +206,9 @@ Move MinMaxAgent::calculateMove(const GameBoard& board)
 			  << (tally/elapsed.count()) << " states/s" << std::endl;
 	std::cout << "Picked moves with score:  " << bestScore << std::endl;
 	std::uniform_int_distribution<int> unidist(0, topMoves.size()-1);
+
+	// Clear move cache to avoid memory hogging
+	_scorecache.clear();
+
 	return topMoves.at(unidist(rengine));
 }

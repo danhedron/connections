@@ -44,4 +44,17 @@ BOOST_AUTO_TEST_CASE(MinMaxTest)
 	print_board(board);
 }
 
+BOOST_AUTO_TEST_CASE(AgentMemoryTest)
+{
+	for(size_t i = 0; i < 10; ++i) {
+		Agent* agent = new MinMaxAgent(T_WHITE, 5);
+
+		GameBoard board(3);
+
+		agent->calculateMove(board);
+
+		delete agent;
+	}
+}
+
 BOOST_AUTO_TEST_SUITE_END()
