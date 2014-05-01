@@ -10,6 +10,7 @@
 #include <QFileInfo>
 #include <QDir>
 #include "GameBoardWidget.hpp"
+#include <MinMaxAgent.hpp>
 
 int hasarg(char** argv, int argc, const std::string& arg, bool value = false) {
 	for(int i = 0; i < argc; ++i) {
@@ -19,6 +20,17 @@ int hasarg(char** argv, int argc, const std::string& arg, bool value = false) {
 		}
 	}
 	return -1;
+}
+
+bool has_arg(char** argv, int argc, const std::string& arg, int& pos, bool value = false)
+{
+	for(int i = 0; i < argc; ++i) {
+		if(arg == argv[i]) {
+			if(i > argc -1 && value) return false;
+			pos = i; return true;
+		}
+	}
+	return false;
 }
 
 auto graphcb = [&](const GameBoard& b, const std::string& fname) {
@@ -84,6 +96,34 @@ int main(int argc, char** argv)
 		});
 
 		out << QString::fromStdString(GraphGen::graph(b, depth, vdepth, showlabels));
+	}
+	else if(has_arg(argv, argc, "-count-from", arc, true)) {
+		std::string seq = argv[arc+1];
+		size_t n = atoi(seq.substr(0,1).c_str());
+		GraphGen::setPrepareImageCallback(graphcb);
+		GameBoard b(n, seq.size() > 1 ? seq.substr(1) : std::string((n*n*n)+1, '_'));
+
+		std::cout << b.toString() << std::endl;
+
+		int searchDepth = 2; int searchDepth_arg = 0;
+		if(has_arg(argv, argc, "-count-depth", searchDepth_arg, true)) {
+			searchDepth = atoi(argv[searchDepth_arg+1]);
+		}
+
+		MinMaxAgent agent(T_WHITE, searchDepth-2);
+		int states_searched = 0;
+		agent.setStateEvaluatedCallback([&](const GameBoard&, const GameBoard&, float, float, float, size_t, char)
+		{
+			states_searched ++;
+		});
+		agent.calculateMove(b);
+
+		float stateSize = 1; int num = 57; int tget = num - searchDepth;
+		while(num > tget) {
+			stateSize = stateSize*(num--);
+		}
+
+		std::cout << "States Searched: " << states_searched << " with dlimit: " << searchDepth << " Fraction: " << (states_searched/stateSize) << std::endl;
 	}
 	else {
 		MainWindow mw;
