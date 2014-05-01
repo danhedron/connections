@@ -109,13 +109,16 @@ float MinMaxAgent::maxValue(const GameBoard& oldboard, const Move& move, unsigne
 	return score;
 }
 
+bool printTally = false;
 int tbuff= 0;
 int wcachehits = 0;
+unsigned int tallyCount = 100000;
+
 std::chrono::time_point<std::chrono::system_clock> startClock, now;
 float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool player, float alpha, float beta, unsigned int d)
 {
 	tally ++;
-	if(tally - tbuff >= 10000) {
+	if(tally - tbuff >= tallyCount && printTally) {
 		now = std::chrono::system_clock::now();
 		std::chrono::duration<float> elapsed = now - startClock;
 
@@ -198,17 +201,20 @@ Move MinMaxAgent::calculateMove(const GameBoard& board)
 			topMoves.push_back(move);
 		}
 	}
-	now = std::chrono::system_clock::now();
-	std::chrono::duration<float> elapsed = now - startClock;
-	std::cout << tally << " states / " << cacheHits << " cacheH / "
-			  << (100.f*cacheHits)/tally << "% / "
-			  << (100.f*wcachehits)/tbuff << "% / "
-			  << (tally/elapsed.count()) << " states/s" << std::endl;
-	std::cout << "Picked moves with score:  " << bestScore << std::endl;
-	std::uniform_int_distribution<int> unidist(0, topMoves.size()-1);
+
+	if(printTally) {
+		now = std::chrono::system_clock::now();
+		std::chrono::duration<float> elapsed = now - startClock;
+		std::cout << tally << " states / " << cacheHits << " cacheH / "
+				  << (100.f*cacheHits)/tally << "% / "
+				  << (100.f*wcachehits)/tbuff << "% / "
+				  << (tally/elapsed.count()) << " states/s" << std::endl;
+		std::cout << "Picked moves with score:  " << bestScore << std::endl;
+	}
 
 	// Clear move cache to avoid memory hogging
 	_scorecache.clear();
 
+	std::uniform_int_distribution<int> unidist(0, topMoves.size()-1);
 	return topMoves.at(unidist(rengine));
 }
