@@ -114,6 +114,9 @@ int tbuff= 0;
 int wcachehits = 0;
 unsigned int tallyCount = 100000;
 
+#define PRUNE_SYMMETRY 1
+#define PRUNE_AB 1
+
 std::chrono::time_point<std::chrono::system_clock> startClock, now;
 float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool player, float alpha, float beta, unsigned int d)
 {
@@ -137,13 +140,16 @@ float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool p
 
 	char scoremode = ' ';
 
+#ifdef PRUNE_SYMMETRY
 	auto it = _scorecache.find(board.encodeHash(true));
 	if(it != _scorecache.end()) {
 		scoremode = 'C';
 		statescore = it->second;
 		cacheHits++; wcachehits++;
 	}
-	else if(board.isEndGame()) {
+	else
+#endif
+		if(board.isEndGame()) {
 		statescore = utility(board);
 		scoremode = 'T';
 	}
@@ -155,7 +161,9 @@ float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool p
 		if(player) {
 			for(Move& m : board.availableMoves(colour())) {
 				alpha = std::max(alpha, value(board.apply(m, colour()), board, !player, alpha, beta, d+1));
+#ifdef PRUNE_AB
 				if(beta <= alpha) break;
+#endif
 			}
 			statescore = alpha;
 			scoremode = 'A';
@@ -164,14 +172,18 @@ float MinMaxAgent::value(const GameBoard &board, const GameBoard& parent, bool p
 			for(Move& m : board.availableMoves(opponentColour())) {
 				beta = std::min(beta, value(board.apply(m, opponentColour()),
 											 board, !player, alpha, beta, d+1));
+#ifdef PRUNE_AB
 				if(beta <= alpha) break;
+#endif
 			}
 			statescore = beta;
 			scoremode = 'B';
 		}
 	}
 	if(scoremode != 'C') {
+#ifdef PRUNE_SYMMETRY
 		_scorecache.insert({board.encodeHash(true), statescore});
+#endif
 		if(stateEvaluatedCallback()) {
 			stateEvaluatedCallback()(board, parent, statescore, alpha, beta, d, scoremode);
 		}

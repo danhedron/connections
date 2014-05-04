@@ -62,8 +62,6 @@ class MinMaxAgent : public Agent
 
 	float maxValue(const GameBoard& board, const Move& move, unsigned int d);
 
-	unsigned int maxDepth() const { return _maxDepth; }
-
 	float value(const GameBoard& board, const GameBoard &parent, bool player, float alpha, float beta, unsigned int d);
 
 	std::map<GameBoard::Hash, float> _scorecache;
@@ -75,6 +73,11 @@ public:
 	virtual ~MinMaxAgent() {}
 
 	Move calculateMove(const GameBoard& board);
+
+	unsigned int maxDepth() const { return _maxDepth; }
+
+	void setMaxDepth(unsigned int maxDepth) { _maxDepth = maxDepth; }
+
 };
 
 #endif

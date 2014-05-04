@@ -11,13 +11,22 @@
 #include <MinMaxAgent.hpp>
 #include <QTextStream>
 
-void MainWindow::queueAIMove(Agent *agent, TokenColour tc)
+void MainWindow::queueAIMove(MinMaxAgent *agent, TokenColour tc)
 {
 	setCurrentPlayer(tc);
+
+	// Do a little heuristic.
+	int positions = (6 * (gbw->gameBoard()->getRunSize()-1)) + (5 * gbw->gameBoard()->getRunSize());
+	int available = gbw->gameBoard()->availableMoves(tc).size();
+	agent->setMaxDepth(std::max(3, -1 + (positions - available)/2));
+
+	statusBar()->showMessage(QString("Thinking… (depth: %1)")
+							 .arg(agent->maxDepth()), 5000);
+
 	if(currentWorker) delete currentWorker;
 	currentWorker = new AIPlayerWorker(agent);
 	connect(currentWorker, SIGNAL(moveDecided(BoardIndex,BoardIndex,TokenColour)), this, SLOT(makeMove(BoardIndex,BoardIndex,TokenColour)));
-	currentWorker->startMove( gbw->gameBoard());
+	currentWorker->startMove( gbw->gameBoard() );
 }
 
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
@@ -132,7 +141,7 @@ void MainWindow::setCurrentPlayer(TokenColour player)
 				currentStatus = "Waiting for input";
 			}
 		}
-		statusLabel->setText(QString("%1's Turn (%2)")
+		statusLabel->setText(QString("%1's Turn (%2…)")
 							 .arg(currentName).arg(currentStatus));
 	}
 }

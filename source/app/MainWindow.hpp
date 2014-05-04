@@ -7,7 +7,7 @@
 #include <GameBoard.hpp>
 
 class GameBoardWidget;
-class Agent;
+class MinMaxAgent;
 class AIPlayerWorker;
 class MoveResult;
 
@@ -25,11 +25,11 @@ class MainWindow : public QMainWindow
 
 	bool redai;
 
-	Agent* redPlayerAgent;
+	MinMaxAgent* redPlayerAgent;
 
-	Agent* whitePlayerAgent;
+	MinMaxAgent* whitePlayerAgent;
 
-	void queueAIMove(Agent* agent, TokenColour tc);
+	void queueAIMove(MinMaxAgent *agent, TokenColour tc);
 
 	GameBoard startBoard;
 
