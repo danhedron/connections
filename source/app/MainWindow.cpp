@@ -16,9 +16,12 @@ void MainWindow::queueAIMove(MinMaxAgent *agent, TokenColour tc)
 	setCurrentPlayer(tc);
 
 	// Do a little heuristic.
+	int minSearch = 3;
+	if(boardSize <= 4) minSearch = 5;
+
 	int positions = (6 * (gbw->gameBoard()->getRunSize()-1)) + (5 * gbw->gameBoard()->getRunSize());
 	int available = gbw->gameBoard()->availableMoves(tc).size();
-	agent->setMaxDepth(std::max(3, -1 + (positions - available)/2));
+	agent->setMaxDepth(std::max(minSearch, -1 + (positions - available)/2));
 
 	statusBar()->showMessage(QString("Thinking… (depth: %1)")
 							 .arg(agent->maxDepth()), 5000);
