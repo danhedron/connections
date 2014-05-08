@@ -9,15 +9,18 @@ AIPlayerWorker::AIPlayerWorker(Agent* agent)
 
 	qRegisterMetaType<BoardIndex>("BoardIndex");
 	qRegisterMetaType<TokenColour>("TokenColour");
-
-	start();
-	moveToThread(this);
 }
 
 void AIPlayerWorker::startMove(GameBoard* board)
 {
 	_board = board;
-	QMetaObject::invokeMethod(this, "decideNextMove");
+	connect(this, SIGNAL(finished()), this, SLOT(deleteLater()));
+	start();
+}
+
+void AIPlayerWorker::run()
+{
+	decideNextMove();
 }
 
 void AIPlayerWorker::decideNextMove()

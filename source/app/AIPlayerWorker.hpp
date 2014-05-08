@@ -30,38 +30,21 @@ class AIPlayerWorker : public QThread
 	Agent* _agent;
 	GameBoard* _board;
 
+protected:
+
+	void run();
+
+	void decideNextMove();
+
 public:
 
 	AIPlayerWorker(Agent *agent);
 
 	void startMove(GameBoard *board);
 
-public slots:
-
-	void decideNextMove();
-
 signals:
 
 	void moveDecided(BoardIndex row, BoardIndex column, TokenColour tc);
 };
-
-/*
-class AIPlayerWorker : public QObject
-{
-	Q_OBJECT
-	QThread workerThread;
-	Agent* agent;
-	GameBoard* gameBoard;
-public:
-
-	AIPlayerWorker(Agent* agent);
-
-	void startMove(GameBoard *gbw);
-
-public slots:
-
-	void decideNextMove();
-
-};*/
 
 #endif // AIPLAYERWORKER_H

@@ -26,7 +26,7 @@ void MainWindow::queueAIMove(MinMaxAgent *agent, TokenColour tc)
 	statusBar()->showMessage(QString("Thinking… (depth: %1)")
 							 .arg(agent->maxDepth()), 5000);
 
-	if(currentWorker) delete currentWorker;
+	// AIPlayerWorker thread should clean itself up.
 	currentWorker = new AIPlayerWorker(agent);
 	connect(currentWorker, SIGNAL(moveDecided(BoardIndex,BoardIndex,TokenColour)), this, SLOT(makeMove(BoardIndex,BoardIndex,TokenColour)));
 	currentWorker->startMove( gbw->gameBoard() );
