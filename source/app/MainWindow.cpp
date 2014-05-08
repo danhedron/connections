@@ -18,8 +18,10 @@ void MainWindow::queueAIMove(MinMaxAgent *agent, TokenColour tc)
 	// Do a little heuristic.
 	int minSearch = 3;
 	if(boardSize <= 4) minSearch = 5;
+	int runs = gbw->gameBoard()->getRunSize();
 
-	int positions = (6 * (gbw->gameBoard()->getRunSize()-1)) + (5 * gbw->gameBoard()->getRunSize());
+	int positions = ((runs + 1) * (gbw->gameBoard()->getRunSize()-1))
+			+ (runs * gbw->gameBoard()->getRunSize());
 	int available = gbw->gameBoard()->availableMoves(tc).size();
 	agent->setMaxDepth(std::max(minSearch, -1 + (positions - available)/2));
 
@@ -37,7 +39,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 	  redPlayerAgent(nullptr), whitePlayerAgent(nullptr), startBoard(5),
 	  currentWorker(nullptr)
 {
-	setMinimumSize(300, 300);
+	setMinimumSize(400, 400);
 
 	QMenuBar *mb = menuBar();
 	QMenu* game = mb->addMenu("&Game");
